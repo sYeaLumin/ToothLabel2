@@ -68,13 +68,30 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>.\ann_1.1.2\lib\x64;E:\library\freeglut3\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\library\freeglut3\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LibraryPath>.\ann_1.1.2\lib;E:\library\freeglut3\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>E:\library\freeglut3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\PROJECTS\vs\Tooth\ToothLabel2\ToothLabel2\ann_1.1.2\lib\x86;E:\library\freeglut3\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>E:\library\freeglut3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\library\freeglut3\lib;E:\PROJECTS\vs\Tooth\ToothLabel2\ToothLabel2\ann_1.1.2\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>ANN.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -94,6 +111,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ANN.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -107,9 +125,74 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ANN.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="alglib\alglibinternal.h" />
+    <ClInclude Include="alglib\alglibmisc.h" />
+    <ClInclude Include="alglib\ap.h" />
+    <ClInclude Include="alglib\dataanalysis.h" />
+    <ClInclude Include="alglib\diffequations.h" />
+    <ClInclude Include="alglib\fasttransforms.h" />
+    <ClInclude Include="alglib\integration.h" />
+    <ClInclude Include="alglib\interpolation.h" />
+    <ClInclude Include="alglib\linalg.h" />
+    <ClInclude Include="alglib\optimization.h" />
+    <ClInclude Include="alglib\solvers.h" />
+    <ClInclude Include="alglib\specialfunctions.h" />
+    <ClInclude Include="alglib\statistics.h" />
+    <ClInclude Include="alglib\stdafx.h" />
+    <ClInclude Include="ann_1.1.2\ANN\ANN.h" />
+    <ClInclude Include="FileManager.h" />
+    <ClInclude Include="maxflow-v3.01\block.h" />
+    <ClInclude Include="maxflow-v3.01\graph.h" />
+    <ClInclude Include="MeshDecimation\mdMeshDecimator.h" />
+    <ClInclude Include="MeshDecimation\mdSArray.h" />
+    <ClInclude Include="MeshDecimation\mdVector.h" />
+    <ClInclude Include="Mesh\lineqn.h" />
+    <ClInclude Include="Mesh\matrix.h" />
+    <ClInclude Include="Mesh\mesh.h" />
+    <ClInclude Include="Mesh\vector3.h" />
+    <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="ToothSegmentation\ToothSegmentation.h" />
+    <ClInclude Include="TrackBall.h" />
+    <ClInclude Include="vector3.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="alglib\alglibinternal.cpp" />
+    <ClCompile Include="alglib\alglibmisc.cpp" />
+    <ClCompile Include="alglib\ap.cpp" />
+    <ClCompile Include="alglib\dataanalysis.cpp" />
+    <ClCompile Include="alglib\diffequations.cpp" />
+    <ClCompile Include="alglib\fasttransforms.cpp" />
+    <ClCompile Include="alglib\integration.cpp" />
+    <ClCompile Include="alglib\interpolation.cpp" />
+    <ClCompile Include="alglib\linalg.cpp" />
+    <ClCompile Include="alglib\optimization.cpp" />
+    <ClCompile Include="alglib\solvers.cpp" />
+    <ClCompile Include="alglib\specialfunctions.cpp" />
+    <ClCompile Include="alglib\statistics.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="maxflow-v3.01\graph.cpp" />
+    <ClCompile Include="maxflow-v3.01\maxflow.cpp" />
+    <ClCompile Include="MeshDecimation\mdMeshDecimator.cpp" />
+    <ClCompile Include="Mesh\curvature.cpp" />
+    <ClCompile Include="Mesh\mesh.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="ToothSegmentation\BoundarySmoothing.cpp" />
+    <ClCompile Include="ToothSegmentation\ImprovedFuzzyClustering.cpp" />
+    <ClCompile Include="ToothSegmentation\LeftRightSeparation.cpp" />
+    <ClCompile Include="ToothSegmentation\MeshSimplify.cpp" />
+    <ClCompile Include="ToothSegmentation\MultiLabelGraphCut.cpp" />
+    <ClCompile Include="ToothSegmentation\SplitJointedTeeth.cpp" />
+    <ClCompile Include="ToothSegmentation\ToothSegmentation.cpp" />
+    <ClCompile Include="TrackBall.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="maxflow-v3.01\instances.inc" />
+    <None Include="MeshDecimation\mdVector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

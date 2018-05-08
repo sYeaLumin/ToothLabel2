@@ -13,5 +13,212 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ANN">
+      <UniqueIdentifier>{bd15f4ae-38e8-4b85-938e-ff17e606beef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Alglib">
+      <UniqueIdentifier>{b5f6ac67-3ae0-41be-843a-7fd315a92e80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Maxflow">
+      <UniqueIdentifier>{a370d698-c291-4d0b-bbb5-887e54e9a222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mesh">
+      <UniqueIdentifier>{0e3b84fd-82dd-4e21-a344-c351add81641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MeshDecimation">
+      <UniqueIdentifier>{d3c11f70-5916-48a8-b747-b94c560dc1b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ToothSegmentation">
+      <UniqueIdentifier>{760b9ffd-7909-4f4d-b243-bc4a190cc78f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{01a500e0-5107-4d80-a5ad-c92e27494c43}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ann_1.1.2\ANN\ANN.h">
+      <Filter>ANN</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\alglibinternal.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\alglibmisc.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\ap.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\dataanalysis.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\diffequations.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\fasttransforms.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\integration.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\interpolation.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\linalg.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\optimization.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\solvers.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\specialfunctions.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\statistics.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="alglib\stdafx.h">
+      <Filter>Alglib</Filter>
+    </ClInclude>
+    <ClInclude Include="maxflow-v3.01\block.h">
+      <Filter>Maxflow</Filter>
+    </ClInclude>
+    <ClInclude Include="maxflow-v3.01\graph.h">
+      <Filter>Maxflow</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\lineqn.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\matrix.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\mesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\vector3.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDecimation\mdMeshDecimator.h">
+      <Filter>MeshDecimation</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDecimation\mdSArray.h">
+      <Filter>MeshDecimation</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDecimation\mdVector.h">
+      <Filter>MeshDecimation</Filter>
+    </ClInclude>
+    <ClInclude Include="ToothSegmentation\ToothSegmentation.h">
+      <Filter>ToothSegmentation</Filter>
+    </ClInclude>
+    <ClInclude Include="FileManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Quaternion.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackBall.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="vector3.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="alglib\alglibinternal.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\alglibmisc.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\ap.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\dataanalysis.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\diffequations.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\fasttransforms.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\integration.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\interpolation.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\linalg.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\optimization.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\solvers.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\specialfunctions.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="alglib\statistics.cpp">
+      <Filter>Alglib</Filter>
+    </ClCompile>
+    <ClCompile Include="maxflow-v3.01\graph.cpp">
+      <Filter>Maxflow</Filter>
+    </ClCompile>
+    <ClCompile Include="maxflow-v3.01\maxflow.cpp">
+      <Filter>Maxflow</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\curvature.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\mesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDecimation\mdMeshDecimator.cpp">
+      <Filter>MeshDecimation</Filter>
+    </ClCompile>
+    <ClCompile Include="ToothSegmentation\BoundarySmoothing.cpp">
+      <Filter>ToothSegmentation</Filter>
+    </ClCompile>
+    <ClCompile Include="ToothSegmentation\ImprovedFuzzyClustering.cpp">
+      <Filter>ToothSegmentation</Filter>
+    </ClCompile>
+    <ClCompile Include="ToothSegmentation\LeftRightSeparation.cpp">
+      <Filter>ToothSegmentation</Filter>
+    </ClCompile>
+    <ClCompile Include="ToothSegmentation\MeshSimplify.cpp">
+      <Filter>ToothSegmentation</Filter>
+    </ClCompile>
+    <ClCompile Include="ToothSegmentation\MultiLabelGraphCut.cpp">
+      <Filter>ToothSegmentation</Filter>
+    </ClCompile>
+    <ClCompile Include="ToothSegmentation\SplitJointedTeeth.cpp">
+      <Filter>ToothSegmentation</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToothSegmentation\ToothSegmentation.cpp">
+      <Filter>ToothSegmentation</Filter>
+    </ClCompile>
+    <ClCompile Include="FileManager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Quaternion.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackBall.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="maxflow-v3.01\instances.inc">
+      <Filter>Maxflow</Filter>
+    </None>
+    <None Include="MeshDecimation\mdVector.inl">
+      <Filter>MeshDecimation</Filter>
+    </None>
   </ItemGroup>
 </Project>
