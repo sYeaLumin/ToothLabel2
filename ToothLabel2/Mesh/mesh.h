@@ -226,6 +226,8 @@ namespace BiMesh
 
 		int simplfiyLabel = 0;
 		int simplifyMapping = 0;
+		int bubbleNoiseLabel = 0;//ÆøÅÝ±êÇ©
+		int bubbleNoiseLabel2 = 0;
 
 		Face() : he(NULL) { }
 
