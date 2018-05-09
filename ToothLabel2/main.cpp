@@ -57,7 +57,7 @@ size_t currentFileIdx = 24; //part2/3, idx=16
 string filePath = "E:\\LAB\\Tooth\\Model\\";
 string modelName = "LXB2L.obj";
 string modelName2 = "LXB3L.obj";
-string modelNameSimplify = "LXB2L200_test.obj";
+string modelNameSimplify = "LXB2L150_test.obj";
 
 vector<string> modelPathList;
 
