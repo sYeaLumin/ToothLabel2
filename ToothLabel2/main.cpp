@@ -14,6 +14,7 @@
 #include <time.h>
 #include "windows.h"   
 #include <io.h>
+#include <direct.h>
 
 #include <GL/freeglut.h>
 #include "TrackBall.h"
@@ -52,7 +53,7 @@ TrackBall trackball;
 
 string rootFilePath = "E:/tooth_data/part1/5/"; // 2/1-4;
 string pcaDataFile = "E:/tooth_data/parameters/pca.txt";
-size_t currentFileIdx = 24; //part2/3, idx=16 
+size_t currentFileIdx = 24; 
 
 string filePath = "E:\\LAB\\Tooth\\Model\\";
 string modelName = "LXB2L.obj";
@@ -79,8 +80,6 @@ void InitMenu();
 void LoadMesh(Mesh & mesh, string & modelName, bool simplify_flag = false);
 void LoadNewModel();
 void CreateColorList();
-void ReadFiles();
-
 
 // window related 
 void MenuCallback(int value);
@@ -101,16 +100,41 @@ void MouseWheelFunc(int button, int dir, int x, int y);
 void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut);
 void mapLabelForBubbleNoise(Mesh & mesh, Mesh & meshSiplify);
 void remapLabelForBubbleNoise(Mesh & meshSiplify, Mesh & mesh);
-
+//简化模型参数
 double threshold = 0.1; //0.15
+//模型ANN映射参数
 int thresholdForMap = 3; //2
 int KForMap = 10; //5
-//0.1 2 5
+
+string rootPath = "F:\\Tooth\\";
+string oriModelPath = "TestOri\\";
+string simModelPath = "TestSim\\";
+string featurePath = "TestFeature\\";
+vector<string> modelPathList;
+void CreateDir(string dir);
+void ReadFiles(string rootpath, vector<string> pathList);
+
 
 int main(int argc, char *argv[]) {
-	CreateColorList();
-	ReadFiles();
-	// glut initialization functions:
+	string stl = "STL1\\";
+	string root = rootPath + oriModelPath + stl;
+	ReadFiles(root, modelPathList);
+	for (size_t i = 0; i < modelPathList.size(); i++) {
+		string model = root + modelPathList[i];
+		vector<string> nameList2,nameList3;
+		ReadFiles(model + "\\2\\", nameList2);
+		ReadFiles(model + "\\3\\", nameList3);
+		for (int j = 0; j < 2; j++) {
+			string oriM2P = model + nameList2[j];
+			string oriM3P = model + nameList3[j];
+			string name = nameList2[i].substr(0, nameList2[2].find_last_of("."));
+			string simM2P = rootPath + simModelPath + stl + name;// +".obj";
+			string featureM2P = rootPath + featurePath + stl + name;// +".txt";
+			CreateDir(simM2P);
+			CreateDir(featureM2P);
+		}
+	}
+	/*
 	glutInit(&argc, argv);
 	InitGL();
 	InitMenu();
@@ -122,8 +146,31 @@ int main(int argc, char *argv[]) {
 	mapLabelForBubbleNoise(tooth, toothSimplify);
 	remapLabelForBubbleNoise(toothSimplify, tooth);
 	cout << endl;
-	glutMainLoop();
+	glutMainLoop();*/
 	return 0;
+}
+
+void CreateDir(string dir)
+{
+	int m = 0, n;
+	string str1, str2;
+
+	str1 = dir;
+	str2 = str1.substr(0, 2);
+	str1 = str1.substr(3, str1.size());
+
+	while (m >= 0)
+	{
+		m = str1.find('\\');
+
+		str2 += '\\' + str1.substr(0, m);
+		n = _access(str2.c_str(), 0); //判断该目录是否存在
+		if (n == -1)
+		{
+			_mkdir(str2.c_str());     //创建目录
+		}
+		str1 = str1.substr(m + 1, str1.size());
+	}
 }
 
 void remapLabelForBubbleNoise(Mesh & meshSiplify, Mesh & mesh) {
@@ -327,15 +374,14 @@ void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut) {
 	annClose();
 }
 
-void ReadFiles()
+void ReadFiles(string rootpath, vector<string> pathList)
 {
-
 	struct _finddata_t fa;
 	long long fHandle;
-	string ss = rootFilePath + "*";
-	if ((fHandle = _findfirst(ss.c_str(), &fa)) == -1L)//这里可以改成需要的目录 
+	string ss = rootpath + "*";
+	if ((fHandle = _findfirst(ss.c_str(), &fa)) == -1L)
 	{
-		printf("there is no file\n");
+		printf("ReadFiles : There is no file\n");
 	}
 	else
 	{
@@ -344,14 +390,11 @@ void ReadFiles()
 			string ss(fa.name);
 			if (ss != "." && ss != "..")
 			{
-				string s = rootFilePath + ss+"/";
-				modelPathList.push_back(s);
+				pathList.push_back(ss);
 				//cout << s << endl;
 			}
 		} while (_findnext(fHandle, &fa) == 0);
 		_findclose(fHandle);
-		if (modelPathList.size() > 0)
-			filePath = modelPathList[currentFileIdx];
 	}
 }
 
