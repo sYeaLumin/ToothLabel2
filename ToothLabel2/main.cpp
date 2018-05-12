@@ -21,6 +21,7 @@
 #include "FileManager.h"
 #include "ToothSegmentation/ToothSegmentation.h"
 #include "ann_1.1.2\ANN\ANN.h"
+#include "FeatureExtractor.h"
 
 using namespace std;
 using namespace MeshSegmentation;
@@ -60,8 +61,6 @@ string modelName = "LXB2L.obj";
 string modelName2 = "LXB3L.obj";
 string modelNameSimplify = "LXB2L150_test.obj";
 
-vector<string> modelPathList;
-
 Mesh tooth,tooth2,toothSimplify;
 bool simplifyOnoff = false;
 vector<Vector3d> colorList;
@@ -77,7 +76,7 @@ void ScreenToNCC(int x, int y, float & nccX, float & nccY);
 void SetBoundaryBox(const Vector3d & bmin, const Vector3d & bmax);
 void InitGL();
 void InitMenu();
-void LoadMesh(Mesh & mesh, string & modelName, bool simplify_flag = false);
+void LoadMesh(Mesh & mesh, string & modelName);
 void LoadNewModel();
 void CreateColorList();
 
@@ -100,38 +99,63 @@ void MouseWheelFunc(int button, int dir, int x, int y);
 void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut);
 void mapLabelForBubbleNoise(Mesh & mesh, Mesh & meshSiplify);
 void remapLabelForBubbleNoise(Mesh & meshSiplify, Mesh & mesh);
-//简化模型参数
-double threshold = 0.1; //0.15
+
 //模型ANN映射参数
 int thresholdForMap = 3; //2
 int KForMap = 10; //5
 
 string rootPath = "F:\\Tooth\\";
 string oriModelPath = "TestOri\\";
-string simModelPath = "TestSim\\";
-string featurePath = "TestFeature\\";
+string simModelPath = "TestSim2\\";
+string featurePath = "TestFeature2\\";
 vector<string> modelPathList;
 void CreateDir(string dir);
-void ReadFiles(string rootpath, vector<string> pathList);
+void ReadFiles(string rootpath, vector<string>& pathList);
 
+//简化模型参数
+double threshold = 0.1; //0.15
+MeshSimplify ms;
+SimplifyParameters sp;
+
+//特征提取
+FeatureExtractor fExtractor;
 
 int main(int argc, char *argv[]) {
+	sp.d_ratio = threshold;
+
 	string stl = "STL1\\";
 	string root = rootPath + oriModelPath + stl;
 	ReadFiles(root, modelPathList);
 	for (size_t i = 0; i < modelPathList.size(); i++) {
 		string model = root + modelPathList[i];
+		cout << model << endl;
 		vector<string> nameList2,nameList3;
 		ReadFiles(model + "\\2\\", nameList2);
 		ReadFiles(model + "\\3\\", nameList3);
 		for (int j = 0; j < 2; j++) {
-			string oriM2P = model + nameList2[j];
-			string oriM3P = model + nameList3[j];
-			string name = nameList2[i].substr(0, nameList2[2].find_last_of("."));
-			string simM2P = rootPath + simModelPath + stl + name;// +".obj";
-			string featureM2P = rootPath + featurePath + stl + name;// +".txt";
+			string oriM2P = model + "\\2\\" + nameList2[j];
+			string oriM3P = model + "\\3\\" + nameList3[j];
+			string name = nameList2[j].substr(0, nameList2[j].find_last_of("."));
+			string simM2P = rootPath + simModelPath + stl + modelPathList[i] + "\\";//+ name +".obj";
+			string featureM2P = rootPath + featurePath + stl + modelPathList[i] + "\\" + name;// +".txt";
 			CreateDir(simM2P);
 			CreateDir(featureM2P);
+			//简化
+			//ms.Simplify(oriM2P, simM2P + name + ".obj", sp);
+			Mesh OM2, OM3, SM2;
+			LoadMesh(OM2, oriM2P);
+			LoadMesh(OM3, oriM3P);
+			ms.Simplify(OM2, SM2, sp, simM2P + name + ".obj");
+			//映射label
+			BuildLabelForBubbleNoise(OM2, OM3);
+			mapLabelForBubbleNoise(OM2, SM2);
+			int* labelForTooth = new int[SM2.fList.size()];
+			for (size_t t = 0; t < SM2.fList.size(); t++)
+				labelForTooth[t] = SM2.fList[t]->bubbleNoiseLabel;
+			//特征提取
+			fExtractor.extractFeature(simM2P + name + ".obj");
+			fExtractor.saveFeature(featureM2P + "\\" + name + ".txt", labelForTooth);
+			delete[] labelForTooth;
 		}
 	}
 	/*
@@ -147,6 +171,7 @@ int main(int argc, char *argv[]) {
 	remapLabelForBubbleNoise(toothSimplify, tooth);
 	cout << endl;
 	glutMainLoop();*/
+	system("pause");
 	return 0;
 }
 
@@ -374,7 +399,7 @@ void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut) {
 	annClose();
 }
 
-void ReadFiles(string rootpath, vector<string> pathList)
+void ReadFiles(string rootpath, vector<string>& pathList)
 {
 	struct _finddata_t fa;
 	long long fHandle;
@@ -391,7 +416,7 @@ void ReadFiles(string rootpath, vector<string> pathList)
 			if (ss != "." && ss != "..")
 			{
 				pathList.push_back(ss);
-				//cout << s << endl;
+				//cout << ss << endl;
 			}
 		} while (_findnext(fHandle, &fa) == 0);
 		_findclose(fHandle);
@@ -519,13 +544,13 @@ void LoadNewModel()
 	filePath = fullPath.substr(0, fullPath.find_last_of("\\"))+'/';
 	if (bSel)
 	{
-		LoadMesh(tooth, filePath + modelName, simplifyOnoff);
+		LoadMesh(tooth, filePath + modelName);
 		SetBoundaryBox(tooth.MinCoord(), tooth.MaxCoord());
 	}
 }
 
 // Load mesh file
-void LoadMesh(Mesh & mesh, string & modelName, bool simplfy_flag)
+void LoadMesh(Mesh & mesh, string & modelName)
 {
 	string modelExtensions = modelName.substr(modelName.length() - 3, modelName.length());
 
@@ -713,7 +738,7 @@ void SpecialKeyFcn(GLint specialKey, GLint xMouse, GLint yMouse)
 	if (oldFileIdx != currentFileIdx)
 	{
 		filePath = modelPathList[currentFileIdx];
-		LoadMesh(tooth, modelPathList[currentFileIdx] + modelName, simplifyOnoff);
+		LoadMesh(tooth, modelPathList[currentFileIdx] + modelName);
 		SetBoundaryBox(tooth.MinCoord(), tooth.MaxCoord());
 		xtrans = ytrans = 0.0;
 	}

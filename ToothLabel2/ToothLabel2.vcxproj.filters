@@ -34,6 +34,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{01a500e0-5107-4d80-a5ad-c92e27494c43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Feature">
+      <UniqueIdentifier>{223b34f1-f2e9-4dca-8222-40e7f23274a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ann_1.1.2\ANN\ANN.h">
@@ -123,6 +126,24 @@
     <ClInclude Include="vector3.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="blaswrap.h">
+      <Filter>Feature</Filter>
+    </ClInclude>
+    <ClInclude Include="clapack.h">
+      <Filter>Feature</Filter>
+    </ClInclude>
+    <ClInclude Include="DijkstraForGeodesics.h">
+      <Filter>Feature</Filter>
+    </ClInclude>
+    <ClInclude Include="f2c.h">
+      <Filter>Feature</Filter>
+    </ClInclude>
+    <ClInclude Include="FeatureExtractor.h">
+      <Filter>Feature</Filter>
+    </ClInclude>
+    <ClInclude Include="waPCA.h">
+      <Filter>Feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alglib\alglibinternal.cpp">
@@ -211,6 +232,12 @@
     </ClCompile>
     <ClCompile Include="TrackBall.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="DijkstraForGeodesics.cpp">
+      <Filter>Feature</Filter>
+    </ClCompile>
+    <ClCompile Include="FeatureExtractor.cpp">
+      <Filter>Feature</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

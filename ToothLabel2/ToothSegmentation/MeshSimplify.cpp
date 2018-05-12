@@ -7,42 +7,15 @@ namespace MeshSegmentation
 		cout << msg;
 	}
 
-	void MeshSimplify::Simplify(string modelName, SimplifyParameters & para)
+	void MeshSimplify::Simplify(string modelName, string simplifyModelName, SimplifyParameters & para)
 	{
 		Mesh mesh;
 		if (!mesh.LoadModel(modelName.c_str())) return;
-		string labelName = modelName.substr(0, modelName.length() - 4) + ".txt";
-		mesh.LoadLabels(labelName.c_str());
-
 		Simplify(mesh, para);
-		stringstream ss;
-		ss << (int)(para.d_ratio * 1000);
-		string s_ratio;
-		ss >> s_ratio;
-		while (s_ratio.length() < 3)
-		{
-			s_ratio = s_ratio + '0';
-		}
-
-		string prefix = modelName.substr(0, modelName.find_last_of("."));
-		string simplifyModelName;
-		string simplifyLabelName;
-		if (para.labelBased)
-		{
-			simplifyModelName = prefix + s_ratio + para.trainModelExtension;
-			simplifyLabelName = prefix + s_ratio + para.trainLabelExtension;
-		}
-		else
-		{
-			simplifyModelName = prefix + s_ratio + para.testModelExtension;
-			simplifyLabelName = prefix + s_ratio + para.testLabelExtension;
-		}
-
 		SaveOBJ(simplifyModelName);
-		SaveLabel(simplifyLabelName);
 	}
 
-	void MeshSimplify::Simplify(Mesh & inputMesh, Mesh & outputMesh, SimplifyParameters & para)
+	void MeshSimplify::Simplify(Mesh & inputMesh, Mesh & outputMesh, SimplifyParameters & para, string outPath)
 	{
 		Simplify(inputMesh, para);
 		vector<Vector3d> points;
@@ -62,6 +35,10 @@ namespace MeshSegmentation
 		{
 			outputMesh.fList[i]->SetLabel(decimatedLabels[i]);
 		}
+
+		if (outPath != "")
+			SaveOBJ(outPath);
+
 	}
 
 	void MeshSimplify::Simplify(Mesh & mesh, SimplifyParameters & para)

@@ -204,8 +204,8 @@ namespace MeshSegmentation
 	class MeshSimplify:virtual protected SegmentationBaseClass
 	{
 	public:
-		void Simplify(string modelName, SimplifyParameters & para);
-		void Simplify(Mesh & inputMesh, Mesh & outputMesh, SimplifyParameters & para);
+		void Simplify(string modelName, string simplifyModelName, SimplifyParameters & para);
+		void Simplify(Mesh & inputMesh, Mesh & outputMesh, SimplifyParameters & para, string outPath = "");
 		
 		MeshSimplify(){};
 		~MeshSimplify(){};
