@@ -81,7 +81,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>E:\library\freeglut3\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\library\freeglut3\lib;E:\PROJECTS\vs\Tooth\ToothLabel2\ToothLabel2\ann_1.1.2\lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>E:\PROJECTS\vs\Tooth\ToothLabel2\ToothLabel2\clapack\x86;E:\library\freeglut3\lib;E:\PROJECTS\vs\Tooth\ToothLabel2\ToothLabel2\ann_1.1.2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -111,7 +111,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ANN.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blas.lib;lapack.lib;libf2c.lib;tmglib.lib;ANN.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,6 +144,11 @@
     <ClInclude Include="alglib\statistics.h" />
     <ClInclude Include="alglib\stdafx.h" />
     <ClInclude Include="ann_1.1.2\ANN\ANN.h" />
+    <ClInclude Include="blaswrap.h" />
+    <ClInclude Include="clapack.h" />
+    <ClInclude Include="DijkstraForGeodesics.h" />
+    <ClInclude Include="f2c.h" />
+    <ClInclude Include="FeatureExtractor.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="maxflow-v3.01\block.h" />
     <ClInclude Include="maxflow-v3.01\graph.h" />
@@ -157,6 +162,20 @@
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="ToothSegmentation\ToothSegmentation.h" />
     <ClInclude Include="TrackBall.h" />
+    <ClInclude Include="Trimesh2\bsphere.h" />
+    <ClInclude Include="Trimesh2\Color.h" />
+    <ClInclude Include="Trimesh2\GLCamera.h" />
+    <ClInclude Include="Trimesh2\glui.h" />
+    <ClInclude Include="Trimesh2\ICP.h" />
+    <ClInclude Include="Trimesh2\KDtree.h" />
+    <ClInclude Include="Trimesh2\lineqn.h" />
+    <ClInclude Include="Trimesh2\mempool.h" />
+    <ClInclude Include="Trimesh2\noise3d.h" />
+    <ClInclude Include="Trimesh2\timestamp.h" />
+    <ClInclude Include="Trimesh2\TriMesh.h" />
+    <ClInclude Include="Trimesh2\TriMesh_algo.h" />
+    <ClInclude Include="Trimesh2\Vec.h" />
+    <ClInclude Include="Trimesh2\XForm.h" />
     <ClInclude Include="vector3.h" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +192,8 @@
     <ClCompile Include="alglib\solvers.cpp" />
     <ClCompile Include="alglib\specialfunctions.cpp" />
     <ClCompile Include="alglib\statistics.cpp" />
+    <ClCompile Include="DijkstraForGeodesics.cpp" />
+    <ClCompile Include="FeatureExtractor.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maxflow-v3.01\graph.cpp" />
@@ -189,10 +210,30 @@
     <ClCompile Include="ToothSegmentation\SplitJointedTeeth.cpp" />
     <ClCompile Include="ToothSegmentation\ToothSegmentation.cpp" />
     <ClCompile Include="TrackBall.cpp" />
+    <ClCompile Include="Trimesh2\diffuse.cc" />
+    <ClCompile Include="Trimesh2\edgeflip.cc" />
+    <ClCompile Include="Trimesh2\faceflip.cc" />
+    <ClCompile Include="Trimesh2\filter.cc" />
+    <ClCompile Include="Trimesh2\ICP.cc" />
+    <ClCompile Include="Trimesh2\KDtree.cc" />
+    <ClCompile Include="Trimesh2\lmsmooth.cc" />
+    <ClCompile Include="Trimesh2\remove.cc" />
+    <ClCompile Include="Trimesh2\reorder_verts.cc" />
+    <ClCompile Include="Trimesh2\subdiv.cc" />
+    <ClCompile Include="Trimesh2\TriMesh_bounding.cc" />
+    <ClCompile Include="Trimesh2\TriMesh_connectivity.cc" />
+    <ClCompile Include="Trimesh2\TriMesh_curvature.cc" />
+    <ClCompile Include="Trimesh2\TriMesh_grid.cc" />
+    <ClCompile Include="Trimesh2\TriMesh_io.cc" />
+    <ClCompile Include="Trimesh2\TriMesh_normals.cc" />
+    <ClCompile Include="Trimesh2\TriMesh_pointareas.cc" />
+    <ClCompile Include="Trimesh2\TriMesh_stats.cc" />
+    <ClCompile Include="Trimesh2\TriMesh_tstrips.cc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="maxflow-v3.01\instances.inc" />
     <None Include="MeshDecimation\mdVector.inl" />
+    <None Include="Trimesh2\COPYING" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

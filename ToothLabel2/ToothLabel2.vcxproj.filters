@@ -37,6 +37,9 @@
     <Filter Include="Feature">
       <UniqueIdentifier>{223b34f1-f2e9-4dca-8222-40e7f23274a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Trimesh2">
+      <UniqueIdentifier>{2937edea-3ec0-426a-b8c8-9771fc3f3139}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ann_1.1.2\ANN\ANN.h">
@@ -141,8 +144,47 @@
     <ClInclude Include="FeatureExtractor.h">
       <Filter>Feature</Filter>
     </ClInclude>
-    <ClInclude Include="waPCA.h">
-      <Filter>Feature</Filter>
+    <ClInclude Include="Trimesh2\bsphere.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\Color.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\GLCamera.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\glui.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\ICP.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\KDtree.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\lineqn.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\mempool.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\noise3d.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\timestamp.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\TriMesh.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\TriMesh_algo.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\Vec.h">
+      <Filter>Trimesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimesh2\XForm.h">
+      <Filter>Trimesh2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +281,63 @@
     <ClCompile Include="FeatureExtractor.cpp">
       <Filter>Feature</Filter>
     </ClCompile>
+    <ClCompile Include="Trimesh2\diffuse.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\edgeflip.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\faceflip.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\filter.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\ICP.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\KDtree.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\lmsmooth.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\remove.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\reorder_verts.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\subdiv.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\TriMesh_bounding.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\TriMesh_connectivity.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\TriMesh_curvature.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\TriMesh_grid.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\TriMesh_io.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\TriMesh_normals.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\TriMesh_pointareas.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\TriMesh_stats.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimesh2\TriMesh_tstrips.cc">
+      <Filter>Trimesh2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="maxflow-v3.01\instances.inc">
@@ -246,6 +345,9 @@
     </None>
     <None Include="MeshDecimation\mdVector.inl">
       <Filter>MeshDecimation</Filter>
+    </None>
+    <None Include="Trimesh2\COPYING">
+      <Filter>Trimesh2</Filter>
     </None>
   </ItemGroup>
 </Project>

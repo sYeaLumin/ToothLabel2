@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
 				labelForTooth[t] = SM2.fList[t]->bubbleNoiseLabel;
 			//ÌØÕ÷ÌáÈ¡
 			fExtractor.extractFeature(simM2P + name + ".obj");
-			fExtractor.saveFeature(featureM2P + "\\" + name + ".txt", labelForTooth);
+			fExtractor.saveFeature(featureM2P, labelForTooth);
 			delete[] labelForTooth;
 		}
 	}
@@ -317,7 +317,7 @@ void mapLabelForBubbleNoise(Mesh & mesh, Mesh & meshSiplify) {
 			tmp += mesh.fList[nnIdx[t]]->bubbleNoiseLabel;
 		if (tmp > thresholdForMap) {
 			meshSiplify.fList[i]->bubbleNoiseLabel = 1;
-			cout << i << ":" << tmp  << endl;
+			//cout << i << ":" << tmp  << endl;
 		}
 		//meshWithOut.fList[nnIdx[0]]->center
 	}
@@ -388,7 +388,7 @@ void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut) {
 		//cout << distance << " ";
 		if (distance > threshold) {
 			meshWith.fList[i]->bubbleNoiseLabel = 1;
-			cout << i << ":" << distance << " " << nnIdx[0] << endl;
+			//cout << i << ":" << distance << " " << nnIdx[0] << endl;
 		}	
 		//meshWithOut.fList[nnIdx[0]]->center
 	}
