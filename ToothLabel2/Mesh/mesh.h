@@ -62,6 +62,22 @@ namespace BiMesh
 			face = NULL;
 			flag = false;
 		}
+		~HEdge() {
+			/*
+			if (twin != NULL)
+				delete twin;
+			if (prev != NULL)
+				delete prev;
+			if (next != NULL)
+				delete next;
+			if (start != NULL)
+				delete start;
+			if (face != NULL)
+				delete face;*/
+			//delete twin, prev, next;
+			//delete start;
+			//delete face;
+		}
 
 		HEdge*  Twin() const { return twin; }
 		HEdge*  Prev() const { return prev; }
@@ -231,6 +247,7 @@ namespace BiMesh
 
 		Face() : he(NULL) { }
 
+
 		int LabelPath() const { return labelPath; }
 		int Label() const { return label; }
 		int GroupID() const { return groupID; }
@@ -338,6 +355,7 @@ namespace BiMesh
 			for (i = 0; i < bheList.size(); i++) delete bheList[i];
 			for (i = 0; i < vList.size(); i++) delete vList[i];
 			for (i = 0; i < fList.size(); i++) delete fList[i];
+
 			heList.clear();
 			bheList.clear();
 			vList.clear();

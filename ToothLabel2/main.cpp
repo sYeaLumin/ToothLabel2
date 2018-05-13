@@ -105,25 +105,25 @@ int thresholdForMap = 3; //2
 int KForMap = 10; //5
 
 string rootPath = "F:\\Tooth\\";
-string oriModelPath = "TestOri\\";
-string simModelPath = "TestSim2\\";
-string featurePath = "TestFeature2\\";
+string oriModelPath = "OriginalModel\\";
+string simModelPath = "15SimM2Model\\";
+string featurePath = "15SimM2Feature\\";
 vector<string> modelPathList;
 void CreateDir(string dir);
 void ReadFiles(string rootpath, vector<string>& pathList);
 
 //简化模型参数
-double threshold = 0.1; //0.15
-MeshSimplify ms;
+double threshold = 0.15; //0.15
+//MeshSimplify ms;
 SimplifyParameters sp;
 
 //特征提取
-FeatureExtractor fExtractor;
+//FeatureExtractor fExtractor;
 
 int main(int argc, char *argv[]) {
 	sp.d_ratio = threshold;
 
-	string stl = "STL1\\";
+	string stl = "STL5\\";
 	string root = rootPath + oriModelPath + stl;
 	ReadFiles(root, modelPathList);
 	for (size_t i = 0; i < modelPathList.size(); i++) {
@@ -145,6 +145,7 @@ int main(int argc, char *argv[]) {
 			Mesh OM2, OM3, SM2;
 			LoadMesh(OM2, oriM2P);
 			LoadMesh(OM3, oriM3P);
+			MeshSimplify ms;
 			ms.Simplify(OM2, SM2, sp, simM2P + name + ".obj");
 			//映射label
 			BuildLabelForBubbleNoise(OM2, OM3);
@@ -152,10 +153,11 @@ int main(int argc, char *argv[]) {
 			int* labelForTooth = new int[SM2.fList.size()];
 			for (size_t t = 0; t < SM2.fList.size(); t++)
 				labelForTooth[t] = SM2.fList[t]->bubbleNoiseLabel;
-			//特征提取
+			//特征提取		
+			FeatureExtractor fExtractor;
 			fExtractor.extractFeature(simM2P + name + ".obj");
 			fExtractor.saveFeature(featureM2P, labelForTooth);
-			delete[] labelForTooth;
+			delete[] labelForTooth;/**/
 		}
 	}
 	/*

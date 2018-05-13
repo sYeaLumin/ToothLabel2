@@ -140,6 +140,7 @@ void Mesh::AddFace(int v1, int v2, int v3)
 	f->area = area;
 
 	fList.push_back(f);
+	/**/
 }
 
 
@@ -289,12 +290,12 @@ bool Mesh::LoadSTLFile(const char *cfilename)
 
 	if (headStr[0] == 's')
 	{
-		//cout << "ASCII File." << endl;
+		cout << "ASCII File." << endl;
 		ReadSTLASCII(cfilename);
 	}
 	else
 	{
-		//cout << "Binary File." << endl;
+		cout << "Binary File." << endl;
 		ReadSTLBinary(cfilename);
 	}
 
@@ -461,7 +462,7 @@ void Mesh::STL2OBJ(vector<STLVertex> & xyzList)
 		else
 		{
 			AddFace(xyzList[i].objID, xyzList[i + 1].objID, xyzList[i + 2].objID);
-			fList[fList.size() - 1]->SetLabelPath(j);
+			//fList[fList.size() - 1]->SetLabelPath(j);
 		}
 	}
 
@@ -1129,7 +1130,6 @@ int Mesh::CountConnectedComponents()
 			}
 		}
 	}
-
 	return count;
 }
 

@@ -38,7 +38,6 @@ namespace MeshSegmentation
 
 		if (outPath != "")
 			SaveOBJ(outPath);
-
 	}
 
 	void MeshSimplify::Simplify(Mesh & mesh, SimplifyParameters & para)
