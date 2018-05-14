@@ -101,19 +101,20 @@ void mapLabelForBubbleNoise(Mesh & mesh, Mesh & meshSiplify);
 void remapLabelForBubbleNoise(Mesh & meshSiplify, Mesh & mesh);
 
 //模型ANN映射参数
+double threshold = 0.1; //0.15
 int thresholdForMap = 3; //2
 int KForMap = 10; //5
 
 string rootPath = "F:\\Tooth\\";
-string oriModelPath = "OriginalModel\\";
-string simModelPath = "15SimM2Model\\";
-string featurePath = "15SimM2Feature\\";
+string oriModelPath = "TestOri\\";//"OriginalModel\\";
+string simModelPath = "TestSim2\\";// "15SimM2Model\\";
+string featurePath = "TestFeature2\\";//  "15SimM2Feature\\";
 vector<string> modelPathList;
 void CreateDir(string dir);
 void ReadFiles(string rootpath, vector<string>& pathList);
 
 //简化模型参数
-double threshold = 0.15; //0.15
+double simplifyRatio = 0.15;
 //MeshSimplify ms;
 SimplifyParameters sp;
 
@@ -121,7 +122,7 @@ SimplifyParameters sp;
 //FeatureExtractor fExtractor;
 
 int main(int argc, char *argv[]) {
-	sp.d_ratio = threshold;
+	sp.d_ratio = simplifyRatio;
 
 	string stl = "STL5\\";
 	string root = rootPath + oriModelPath + stl;
@@ -146,7 +147,8 @@ int main(int argc, char *argv[]) {
 			LoadMesh(OM2, oriM2P);
 			LoadMesh(OM3, oriM3P);
 			MeshSimplify ms;
-			ms.Simplify(OM2, SM2, sp, simM2P + name + ".obj");
+			ms.Simplify(OM2, simM2P + name + ".obj", sp);
+			LoadMesh(SM2, simM2P + name + ".obj");
 			//映射label
 			BuildLabelForBubbleNoise(OM2, OM3);
 			mapLabelForBubbleNoise(OM2, SM2);
@@ -154,24 +156,27 @@ int main(int argc, char *argv[]) {
 			for (size_t t = 0; t < SM2.fList.size(); t++)
 				labelForTooth[t] = SM2.fList[t]->bubbleNoiseLabel;
 			//特征提取		
-			FeatureExtractor fExtractor;
-			fExtractor.extractFeature(simM2P + name + ".obj");
-			fExtractor.saveFeature(featureM2P, labelForTooth);
-			delete[] labelForTooth;/**/
+			//FeatureExtractor fExtractor;
+			//fExtractor.extractFeature(simM2P + name + ".obj");
+			//fExtractor.saveFeature(featureM2P, labelForTooth);
+			delete[] labelForTooth;
+			system("pause");
 		}
 	}
-	/*
+/*
 	glutInit(&argc, argv);
 	InitGL();
 	InitMenu();
-	LoadMesh(tooth, filePath+modelName, simplifyOnoff);
-	LoadMesh(tooth2, filePath + modelName2, simplifyOnoff);
-	LoadMesh(toothSimplify, filePath + modelNameSimplify, simplifyOnoff);
+	string ori = "F:\\Tooth\\TestOri\\STL5\\1625037\\2\\l2.stl";
+	string tar = "F:\\Tooth\\TestOri\\STL5\\1625037\\3\\l3.stl";
+	string sim = "F:\\Tooth\\TestSim2\\STL5\\1625037\\l2.obj";
+	LoadMesh(tooth, ori);
+	LoadMesh(tooth2, tar);
+	LoadMesh(toothSimplify, sim);
 	SetBoundaryBox(tooth.MinCoord(), tooth.MaxCoord());
 	BuildLabelForBubbleNoise(tooth, tooth2);
 	mapLabelForBubbleNoise(tooth, toothSimplify);
 	remapLabelForBubbleNoise(toothSimplify, tooth);
-	cout << endl;
 	glutMainLoop();*/
 	system("pause");
 	return 0;
@@ -319,9 +324,8 @@ void mapLabelForBubbleNoise(Mesh & mesh, Mesh & meshSiplify) {
 			tmp += mesh.fList[nnIdx[t]]->bubbleNoiseLabel;
 		if (tmp > thresholdForMap) {
 			meshSiplify.fList[i]->bubbleNoiseLabel = 1;
-			//cout << i << ":" << tmp  << endl;
+			//cout << "MapLabel:" << i << ":" << tmp  << endl;
 		}
-		//meshWithOut.fList[nnIdx[0]]->center
 	}
 	cout << endl;
 	delete[] nnIdx;							// clean things up
@@ -390,7 +394,7 @@ void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut) {
 		//cout << distance << " ";
 		if (distance > threshold) {
 			meshWith.fList[i]->bubbleNoiseLabel = 1;
-			//cout << i << ":" << distance << " " << nnIdx[0] << endl;
+			//cout << "BuildLabel:" << i << ":" << distance << " " << nnIdx[0] << endl;
 		}	
 		//meshWithOut.fList[nnIdx[0]]->center
 	}
@@ -554,6 +558,7 @@ void LoadNewModel()
 // Load mesh file
 void LoadMesh(Mesh & mesh, string & modelName)
 {
+	cout << "LoadMesh : " << modelName << endl;
 	string modelExtensions = modelName.substr(modelName.length() - 3, modelName.length());
 
 	if (!mesh.LoadModel(modelName.c_str()))

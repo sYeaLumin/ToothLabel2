@@ -13,9 +13,29 @@ namespace MeshSegmentation
 		if (!mesh.LoadModel(modelName.c_str())) return;
 		Simplify(mesh, para);
 		SaveOBJ(simplifyModelName);
+
+		decimatedPoints.clear();
+		decimatedPoints.shrink_to_fit();
+		decimatedtriangles.clear();
+		decimatedtriangles.shrink_to_fit();
+		decimatedLabels.clear();
+		decimatedLabels.shrink_to_fit();
 	}
 
-	void MeshSimplify::Simplify(Mesh & inputMesh, Mesh & outputMesh, SimplifyParameters & para, string outPath)
+	void MeshSimplify::Simplify(Mesh & inputMesh, string simplifyModelName, SimplifyParameters & para)
+	{
+		Simplify(inputMesh, para);
+		SaveOBJ(simplifyModelName);
+
+		decimatedPoints.clear();
+		decimatedPoints.shrink_to_fit();
+		decimatedtriangles.clear();
+		decimatedtriangles.shrink_to_fit();
+		decimatedLabels.clear();
+		decimatedLabels.shrink_to_fit();
+	}
+
+	void MeshSimplify::Simplify(Mesh & inputMesh, Mesh & outputMesh, SimplifyParameters & para)
 	{
 		Simplify(inputMesh, para);
 		vector<Vector3d> points;
@@ -35,9 +55,6 @@ namespace MeshSegmentation
 		{
 			outputMesh.fList[i]->SetLabel(decimatedLabels[i]);
 		}
-
-		if (outPath != "")
-			SaveOBJ(outPath);
 	}
 
 	void MeshSimplify::Simplify(Mesh & mesh, SimplifyParameters & para)

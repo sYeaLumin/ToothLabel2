@@ -205,7 +205,8 @@ namespace MeshSegmentation
 	{
 	public:
 		void Simplify(string modelName, string simplifyModelName, SimplifyParameters & para);
-		void Simplify(Mesh & inputMesh, Mesh & outputMesh, SimplifyParameters & para, string outPath = "");
+		void Simplify(Mesh & inputMesh, string simplifyModelName, SimplifyParameters & para);
+		void Simplify(Mesh & inputMesh, Mesh & outputMesh, SimplifyParameters & para);
 		
 		MeshSimplify(){};
 		~MeshSimplify(){};
