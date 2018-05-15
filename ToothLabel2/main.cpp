@@ -131,6 +131,10 @@ int main(int argc, char *argv[]) {
 	string root = rootPath + oriModelPath + stl;
 	ReadFiles(root, modelPathList);
 	int breakNumver = 0;
+	
+	ofstream out_record_txt;
+	out_record_txt.open(recordForFaceLabel.c_str(),ios::ate);
+
 	for (size_t i = 0; i < modelPathList.size(); i++) {
 		if (breakNumver > 1)
 			break;
@@ -142,7 +146,7 @@ int main(int argc, char *argv[]) {
 		ReadFiles(model + "\\2\\", nameList2);
 		ReadFiles(model + "\\3\\", nameList3);
 
-		ofstream out_record_txt(recordForFaceLabel.c_str());
+		//ofstream out_record_txt(recordForFaceLabel.c_str());
 		out_record_txt << modelPathList[i] << "\t  ";
 
 		for (size_t j = 0; j < nameList2.size(); j++) {
@@ -178,8 +182,8 @@ int main(int argc, char *argv[]) {
 			delete[] labelForTooth;
 		}
 		out_record_txt << endl;
-		out_record_txt.close();
 	}
+		out_record_txt.close();
 /*
 	glutInit(&argc, argv);
 	InitGL();
