@@ -99,6 +99,7 @@ void MouseWheelFunc(int button, int dir, int x, int y);
 void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut);
 void mapLabelForBubbleNoise(Mesh & mesh, Mesh & meshSiplify);
 void remapLabelForBubbleNoise(Mesh & meshSiplify, Mesh & mesh);
+void BuildLabelFromLearning(Mesh& mesh, string txtPath);
 
 //模型ANN映射参数
 double threshold = 0.1; //0.15
@@ -125,7 +126,7 @@ SimplifyParameters sp;
 string recordForFaceLabel = "F:\\Tooth\\recordFor15SimM2FL.txt";
 
 int main(int argc, char *argv[]) {
-	sp.d_ratio = simplifyRatio;
+/*	sp.d_ratio = simplifyRatio;
 
 	string stl = "STL5\\";
 	string root = rootPath + oriModelPath + stl;
@@ -184,13 +185,25 @@ int main(int argc, char *argv[]) {
 		out_record_txt << endl;
 	}
 		out_record_txt.close();
-/*
+*/
 	glutInit(&argc, argv);
 	InitGL();
 	InitMenu();
-	string ori = "F:\\Tooth\\TestOri\\STL5\\1625037\\2\\l2.stl";
-	string tar = "F:\\Tooth\\TestOri\\STL5\\1625037\\3\\l3.stl";
-	string sim = "F:\\Tooth\\TestSim2\\STL5\\1625037\\l2.obj";
+	/*string ori = "F:\\Tooth\\FinishOriModel\\STL5\\1625127\\2\\骆小冰_2018-03-05_C01001625127_L.stl";
+	string tar = "F:\\Tooth\\FinishOriModel\\STL5\\1625127\\3\\骆小冰_2018-03-05_C01001625127_L.stl";
+	string sim = "F:\\Tooth\\15SimM2Model\\STL5\\1625127\\骆小冰_2018-03-05_C01001625127_L.obj";
+	string txt = "F:\\Tooth\\Model\\180515-15SimM2Feature\\004_1625127L.txt";*/
+	/*
+	string ori = "F:\\Tooth\\FinishOriModel\\STL5\\1625037\\2\\l2.stl";
+	string tar = "F:\\Tooth\\FinishOriModel\\STL5\\1625037\\3\\l3.stl";
+	string sim = "F:\\Tooth\\15SimM2Model\\STL5\\1625037\\l2.obj";
+	string txt = "F:\\Tooth\\Model\\180515-15SimM2Feature\\004_1625037L.txt";*/
+	
+	string ori = "F:\\Tooth\\FinishOriModel\\STL5\\1625149\\2\\l2.stl";
+	string tar = "F:\\Tooth\\FinishOriModel\\STL5\\1625149\\3\\l3.stl";
+	string sim = "F:\\Tooth\\15SimM2Model\\STL5\\1625149\\l2.obj";
+	string txt = "F:\\Tooth\\Model\\180515-15SimM2Feature\\004_1625149L.txt";
+	
 	LoadMesh(tooth, ori);
 	LoadMesh(tooth2, tar);
 	LoadMesh(toothSimplify, sim);
@@ -198,7 +211,8 @@ int main(int argc, char *argv[]) {
 	BuildLabelForBubbleNoise(tooth, tooth2);
 	mapLabelForBubbleNoise(tooth, toothSimplify);
 	remapLabelForBubbleNoise(toothSimplify, tooth);
-	glutMainLoop();*/
+	BuildLabelFromLearning(toothSimplify, txt);
+	glutMainLoop();
 	system("pause");
 	return 0;
 }
@@ -224,6 +238,25 @@ void CreateDir(string dir)
 		}
 		str1 = str1.substr(m + 1, str1.size());
 	}
+}
+
+void BuildLabelFromLearning(Mesh& mesh, string txtPath) {
+	ifstream txt;
+	txt.open(txtPath, ifstream::in);
+	int i = 0;
+	while (!txt.eof()) {
+		string s;
+		getline(txt, s);
+		istringstream is(s);
+		string faceNum, label;
+		is >> faceNum >> label;
+		mesh.fList[atoi(faceNum.c_str())]->bubbleNoiseLabelResult = atoi(label.c_str());
+		i += 1;
+		if (i % 1000 == 0)
+			cout << ".";
+	}
+	cout << endl;
+	txt.close();
 }
 
 void remapLabelForBubbleNoise(Mesh & meshSiplify, Mesh & mesh) {
@@ -660,12 +693,16 @@ void DrawFlatShaded(Mesh & mesh, int groupID)
 			const Vector3d & pos3 = f->HalfEdge()->Next()->End()->Position();
 			Vector3d normal = (pos2 - pos1).Cross(pos3 - pos1);
 			normal /= normal.L2Norm();
-			if (f->bubbleNoiseLabel == 1 && f->bubbleNoiseLabel2 == 1)
+			if (f->bubbleNoiseLabel == 1 && f->bubbleNoiseLabel2 == 1 && f->bubbleNoiseLabelResult == 0)
 				glColor3d(1.0f, 1.0f, 0.1f);
-			else if(f->bubbleNoiseLabel == 1  && f->bubbleNoiseLabel2 == 0)
+			else if(f->bubbleNoiseLabel == 1  && f->bubbleNoiseLabel2 == 0 && f->bubbleNoiseLabelResult == 0)
 				glColor3d(1.0f, 0.1f, 0.1f);
-			else if (f->bubbleNoiseLabel == 0 && f->bubbleNoiseLabel2 == 1)
+			else if (f->bubbleNoiseLabel == 0 && f->bubbleNoiseLabel2 == 1 && f->bubbleNoiseLabelResult == 0)
 				glColor3d(0.1f, 1.0f, 0.1f);
+			else if (f->bubbleNoiseLabel == 0 && f->bubbleNoiseLabel2 == 0 && f->bubbleNoiseLabelResult == 1)
+				glColor3d(0.1f, 0.1f, 1.0f);
+			else if (f->bubbleNoiseLabel == 1 && f->bubbleNoiseLabel2 == 0 && f->bubbleNoiseLabelResult == 1)
+				glColor3d(1.0f, 0.1f, 1.0f);
 			else 
 				glColor3d(0.4f, 0.4f, 0.4f);
 			glNormal3dv(normal.ToArray());
