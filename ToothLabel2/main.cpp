@@ -126,7 +126,7 @@ SimplifyParameters sp;
 string recordForFaceLabel = "F:\\Tooth\\recordFor15SimM2FL.txt";
 
 int main(int argc, char *argv[]) {
-/*	sp.d_ratio = simplifyRatio;
+	sp.d_ratio = simplifyRatio;
 
 	string stl = "STL5\\";
 	string root = rootPath + oriModelPath + stl;
@@ -185,20 +185,10 @@ int main(int argc, char *argv[]) {
 		out_record_txt << endl;
 	}
 		out_record_txt.close();
-*/
-	glutInit(&argc, argv);
+
+/*	glutInit(&argc, argv);
 	InitGL();
 	InitMenu();
-	/*string ori = "F:\\Tooth\\FinishOriModel\\STL5\\1625127\\2\\ÂæÐ¡±ù_2018-03-05_C01001625127_L.stl";
-	string tar = "F:\\Tooth\\FinishOriModel\\STL5\\1625127\\3\\ÂæÐ¡±ù_2018-03-05_C01001625127_L.stl";
-	string sim = "F:\\Tooth\\15SimM2Model\\STL5\\1625127\\ÂæÐ¡±ù_2018-03-05_C01001625127_L.obj";
-	string txt = "F:\\Tooth\\Model\\180515-15SimM2Feature\\004_1625127L.txt";*/
-	/*
-	string ori = "F:\\Tooth\\FinishOriModel\\STL5\\1625037\\2\\l2.stl";
-	string tar = "F:\\Tooth\\FinishOriModel\\STL5\\1625037\\3\\l3.stl";
-	string sim = "F:\\Tooth\\15SimM2Model\\STL5\\1625037\\l2.obj";
-	string txt = "F:\\Tooth\\Model\\180515-15SimM2Feature\\004_1625037L.txt";*/
-	
 	string ori = "F:\\Tooth\\FinishOriModel\\STL5\\1625149\\2\\l2.stl";
 	string tar = "F:\\Tooth\\FinishOriModel\\STL5\\1625149\\3\\l3.stl";
 	string sim = "F:\\Tooth\\15SimM2Model\\STL5\\1625149\\l2.obj";
@@ -210,9 +200,9 @@ int main(int argc, char *argv[]) {
 	SetBoundaryBox(tooth.MinCoord(), tooth.MaxCoord());
 	BuildLabelForBubbleNoise(tooth, tooth2);
 	mapLabelForBubbleNoise(tooth, toothSimplify);
-	remapLabelForBubbleNoise(toothSimplify, tooth);
+	//remapLabelForBubbleNoise(toothSimplify, tooth);
 	BuildLabelFromLearning(toothSimplify, txt);
-	glutMainLoop();
+	glutMainLoop();*/
 	system("pause");
 	return 0;
 }
