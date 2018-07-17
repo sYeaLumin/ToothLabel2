@@ -246,6 +246,8 @@ namespace BiMesh
 		int bubbleNoiseLabel2 = 0;
 		int bubbleNoiseLabelResult = 0;
 		int faceLabel = 0;
+		int FaceLabel() const { return faceLabel; }
+		int SetFaceLabel(int l) { return faceLabel = l; }
 
 		Face() : he(NULL) { }
 

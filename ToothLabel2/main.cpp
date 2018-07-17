@@ -22,6 +22,7 @@
 #include "ToothSegmentation/ToothSegmentation.h"
 #include "ann_1.1.2\ANN\ANN.h"
 #include "FeatureExtractor.h"
+#include "ToothLabelEditor.h"
 
 using namespace std;
 using namespace MeshSegmentation;
@@ -33,6 +34,9 @@ using namespace MeshSegmentation;
 enum EnumDisplayMode
 {
 	FLATSHADED = 50,
+	EDIT_LABEL,
+	PICK_LABEL,
+	SET_LABEL
 };
 
 // global variables
@@ -149,94 +153,15 @@ float faceLabelColors[16][3] = {
 Mesh toothMesh2, toothMeshSeparated;//有气泡的模型2、分割过的没气泡的模型
 ANNkd_tree* buildANNTreeForMesh(Mesh& mesh);
 
+//面片Label编辑
+ToothLabelEditor TLE;
+
 int main(int argc, char *argv[]) {
-	/*	sp.d_ratio = simplifyRatio;
-
-	string stl = "STL5\\";
-	string root = rootPath + oriModelPath + stl;
-	ReadFiles(root, modelPathList);
-	int breakNumver = 0;
-	
-	ofstream out_record_txt;
-	out_record_txt.open(recordForFaceLabel.c_str(),ios::ate);
-
-	for (size_t i = 23; i < modelPathList.size(); i++) {
-		if (breakNumver > 1)
-			break;
-		else breakNumver++;
-
-		string model = root + modelPathList[i];
-		cout << model << endl;
-		vector<string> nameList2,nameList3;
-		ReadFiles(model + "\\2\\", nameList2);
-		ReadFiles(model + "\\3\\", nameList3);
-
-		//ofstream out_record_txt(recordForFaceLabel.c_str());
-		out_record_txt << modelPathList[i] << "\t  ";
-
-		for (size_t j = 0; j < nameList2.size(); j++) {
-			string oriM2P = model + "\\2\\" + nameList2[j];
-			string oriM3P = model + "\\3\\" + nameList3[j];
-			string name = nameList2[j].substr(0, nameList2[j].find_last_of("."));
-			string simM2P = rootPath + simModelPath + stl + modelPathList[i] + "\\";//+ name +".obj";
-			string featureM2P = rootPath + featurePath + stl + modelPathList[i] + "\\" + name;// +".txt";
-			CreateDir(simM2P);
-			CreateDir(featureM2P);
-			//简化
-			Mesh OM2, OM3, SM2;
-			LoadMesh(OM2, oriM2P);
-			LoadMesh(OM3, oriM3P);
-			BuildLabelForBubbleNoise(OM2, OM3);
-			MeshSimplify ms;
-			ms.Simplify(OM2, simM2P + name + ".obj", sp);
-			LoadMesh(SM2, simM2P + name + ".obj");
-			//映射label
-			//BuildLabelForBubbleNoise(OM2, OM3);
-			mapLabelForBubbleNoise(OM2, SM2);
-			int* labelForTooth = new int[SM2.fList.size()];
-			int numForLabel1 = 0;
-			for (size_t t = 0; t < SM2.fList.size(); t++) {
-				labelForTooth[t] = SM2.fList[t]->bubbleNoiseLabel;
-				if (SM2.fList[t]->bubbleNoiseLabel == 1)
-					numForLabel1++;
-			}			
-			out_record_txt << SM2.fList.size() << "\t  " << numForLabel1 << "\t  ";
-			//特征提取		
-			FeatureExtractor fExtractor;
-			fExtractor.extractFeature(simM2P + name + ".obj");
-			fExtractor.saveFeature(featureM2P, labelForTooth);
-			delete[] labelForTooth;
-		}
-		out_record_txt << endl;
-	}
-		out_record_txt.close();*/
-
-	/*
 	glutInit(&argc, argv);
 	InitGL();
 	InitMenu();
-	string ori = "F:\\Tooth\\180515-15OriModel\\STL5\\1625037\\2\\l2.stl";
-	string tar = "F:\\Tooth\\180515-15OriModel\\STL5\\1625037\\3\\l3.stl";
-	string sim = "F:\\Tooth\\180515-15SimM2ModelNSFB\\STL5\\1625037\\l2.obj";
-	string txt = "F:\\Tooth\\Model\\180515-15SimM2FeatureNSFB\\001_1625037L.txt";
-	
-	LoadMesh(tooth, ori);
-	LoadMesh(tooth2, tar);
-	LoadMesh(toothSimplify, sim);
-	SetBoundaryBox(tooth.MinCoord(), tooth.MaxCoord());
-	BuildLabelForBubbleNoise(tooth, tooth2);
-	mapLabelForBubbleNoise(tooth, toothSimplify);
-	//remapLabelForBubbleNoise(toothSimplify, tooth);
-	BuildLabelFromLearning(toothSimplify, txt);
-	glutMainLoop();
-	system("pause");
-	return 0;*/
-
-	glutInit(&argc, argv);
-	InitGL();
-	InitMenu();
-	string mesh2 = "F:\\Tooth\\\OriginalModel\\STL5\\1635634\\2\\李雪玉_2018-03-08_C01001635634_U.stl";
-	string meshSeparated = "F:\\Tooth\\SeparatedModel\\1635634\\U\\";
+	string mesh2 = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\1635634\\2\\李雪玉_2018-03-08_C01001635634_U.stl";
+	string meshSeparated = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\1635634\\U\\";
 	vector<string> meshSepList;
 	ReadFiles(meshSeparated, meshSepList);
 	LoadMesh(toothMesh2, mesh2);
@@ -709,6 +634,9 @@ void DisplayFunc2()
 	switch (displayMode)
 	{
 	case FLATSHADED:
+	case EDIT_LABEL:
+	case PICK_LABEL:
+	case SET_LABEL:
 		DrawFlatShaded2(toothMesh2, toothMesh2.maxGroupID);
 		break;
 	default:
@@ -729,6 +657,9 @@ void InitMenu()
 	mainMenu = glutCreateMenu(MenuCallback);
 	glutAddSubMenu("Display", displayMenu);
 	glutAddMenuEntry("Load New Model", 100);
+	glutAddMenuEntry("Edit Label", EDIT_LABEL);
+	glutAddMenuEntry("Pick Label", PICK_LABEL);
+	glutAddMenuEntry("Set Label", SET_LABEL);
 	glutAddMenuEntry("Exit", 99);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
@@ -880,6 +811,51 @@ void DrawFlatShaded2(Mesh & mesh, int groupID)
 	glDisable(GL_LIGHTING);
 }
 
+
+void DrawMeshWithDifferentColor(Mesh & mesh)
+{
+	float rotation[16];
+	trackball.m_rotation.GetMatrix(rotation);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(g_fov, winAspect, zNear, zFar);
+	//glOrtho(-2.0, 2.0, -2.0, 2.0, zNear, zFar);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslated(xtrans, ytrans, -sdepth);
+	glMultMatrixf(rotation);
+	glTranslated(-g_center[0], -g_center[1], -g_center[2]);
+
+	FaceList fList = mesh.Faces();
+	glShadeModel(GL_FLAT);
+	glDisable(GL_LIGHTING);
+	glBegin(GL_TRIANGLES);
+	for (size_t i = 0; i<fList.size(); i++) {
+		Face *f = fList[i];
+		const Vector3d & pos1 = f->HalfEdge()->Start()->Position();
+		const Vector3d & pos2 = f->HalfEdge()->End()->Position();
+		const Vector3d & pos3 = f->HalfEdge()->Next()->End()->Position();
+
+		int r = (i & 0x000000FF) >> 0;
+		int g = (i & 0x0000FF00) >> 8;
+		int b = (i & 0x00FF0000) >> 16;
+		glColor3f(r / 255.0f, g / 255.0f, b / 255.0f);
+
+		Vector3d normal = (pos2 - pos1).Cross(pos3 - pos1);
+		normal /= normal.L2Norm();
+		glNormal3dv(normal.ToArray());
+		glVertex3dv(pos1.ToArray());
+		glVertex3dv(pos2.ToArray());
+		glVertex3dv(pos3.ToArray());
+	}
+	glEnd();
+
+	glFlush();
+	glFinish();
+}
+
 void ResetBlendProb()
 {
 	for (size_t i = 0; i < tooth.fList.size(); i++)
@@ -902,6 +878,28 @@ void SaveErrorSimplfiedModel()
 
 	cout << "error simplfied model: " << filePath << " saved" << endl;
 
+}
+
+void ModifyFunc(int x, int y) {
+	if (displayMode != EDIT_LABEL && displayMode != PICK_LABEL && displayMode != SET_LABEL)
+		return;
+	DrawMeshWithDifferentColor(toothMesh2);//mesh!!!!
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	unsigned char data[4];
+	glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	int pickedID = data[0] + data[1] * 256 + data[2] * 65536;
+
+	if (pickedID == 0x00ffffff)
+		pickedID = -1;
+	else
+		cout << "pickedID: " << pickedID << endl;
+
+	if (displayMode == PICK_LABEL)
+		TLE.pickLabel(toothMesh2, pickedID);
+
+	if (displayMode == SET_LABEL)
+		TLE.setLabel(toothMesh2, pickedID);
 }
 
 // GLUT keyboard callback function
@@ -987,6 +985,11 @@ void MouseFunc(int button, int state, int x, int y)
 			isLeftDown = true;
 			ScreenToNCC(x, y, nccX, nccY);
 			trackball.Push(nccX, nccY);
+			ModifyFunc(x, y);
+			/*
+			if (displayMode == EDIT_LABEL) ModifyFunc(x, y);//鼠标拾取
+			else
+				trackball.Push(nccX, nccY);*/
 			break;
 		case GLUT_UP:
 			ScreenToNCC(x, y, nccX, nccY);

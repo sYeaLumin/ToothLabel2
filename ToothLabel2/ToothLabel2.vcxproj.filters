@@ -186,6 +186,9 @@
     <ClInclude Include="Trimesh2\XForm.h">
       <Filter>Trimesh2</Filter>
     </ClInclude>
+    <ClInclude Include="ToothLabelEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alglib\alglibinternal.cpp">
@@ -337,6 +340,9 @@
     </ClCompile>
     <ClCompile Include="Trimesh2\TriMesh_tstrips.cc">
       <Filter>Trimesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="ToothLabelEditor.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

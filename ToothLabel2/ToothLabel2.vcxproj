@@ -69,7 +69,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LibraryPath>.\ann_1.1.2\lib\x64;E:\library\freeglut3\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>.\clapack\x86;.\ann_1.1.2\lib\x64;D:\library\freeglut3\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>E:\library\freeglut3\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -80,8 +80,8 @@
     <LibraryPath>E:\PROJECTS\vs\Tooth\ToothLabel2\ToothLabel2\ann_1.1.2\lib\x86;E:\library\freeglut3\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>E:\library\freeglut3\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\PROJECTS\vs\Tooth\ToothLabel2\ToothLabel2\clapack\x86;E:\library\freeglut3\lib;E:\PROJECTS\vs\Tooth\ToothLabel2\ToothLabel2\ann_1.1.2\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\library\freeglut3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\clapack\x86;D:\library\freeglut3\lib;.\ann_1.1.2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,7 +98,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\library\freeglut3\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>freeglutd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\library\freeglut3\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -125,7 +130,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ANN.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blas.lib;lapack.lib;libf2c.lib;tmglib.lib;ANN.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -160,6 +165,7 @@
     <ClInclude Include="Mesh\mesh.h" />
     <ClInclude Include="Mesh\vector3.h" />
     <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="ToothLabelEditor.h" />
     <ClInclude Include="ToothSegmentation\ToothSegmentation.h" />
     <ClInclude Include="TrackBall.h" />
     <ClInclude Include="Trimesh2\bsphere.h" />
@@ -202,6 +208,7 @@
     <ClCompile Include="Mesh\curvature.cpp" />
     <ClCompile Include="Mesh\mesh.cpp" />
     <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="ToothLabelEditor.cpp" />
     <ClCompile Include="ToothSegmentation\BoundarySmoothing.cpp" />
     <ClCompile Include="ToothSegmentation\ImprovedFuzzyClustering.cpp" />
     <ClCompile Include="ToothSegmentation\LeftRightSeparation.cpp" />
