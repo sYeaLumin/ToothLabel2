@@ -169,7 +169,7 @@ namespace MeshSegmentation
 			modelType = 'U';		// 'L'
 			d_ratio = 0.200f;
 			simplifyWeights.clear();
-			simplifyWeights = { 1.0f, 20.0f, 500.0f };
+			simplifyWeights = { 1.0f, 100.0f, 500.0f };
 			graphCutWeights = { 0.35f, 0.55f, 0.1f };	// 0.35f, 0.5f, 0.15f
 			lambda = 100.0f;
 			yita = 0.05f;

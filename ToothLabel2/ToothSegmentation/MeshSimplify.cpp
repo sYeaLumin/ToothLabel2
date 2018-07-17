@@ -70,7 +70,8 @@ namespace MeshSegmentation
 
 		for (size_t i = 0; i < mesh.vList.size(); i++)
 		{
-			mesh.vList[i]->simplify_level = 0;
+			if(mesh.vList[i]->simplify_level == -1)
+				mesh.vList[i]->simplify_level = 0;
 		}
 
 		vector<Vector3d> mvList;	// vertex list

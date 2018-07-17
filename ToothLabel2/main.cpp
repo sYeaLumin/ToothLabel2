@@ -86,7 +86,9 @@ void ReshapeFunc(int width, int height);
 
 // rendering functions
 void DisplayFunc();
+void DisplayFunc2();
 void DrawFlatShaded(Mesh & mesh, int groupID = -1);
+void DrawFlatShaded2(Mesh & mesh, int groupID = -1);
 
 // input related glut functions
 void KeyboardFunc(unsigned char ch, int x, int y);
@@ -103,13 +105,13 @@ void BuildLabelFromLearning(Mesh& mesh, string txtPath);
 
 //模型ANN映射参数
 double threshold = 0.1; //0.15
-int thresholdForMap = 3; //2
+int thresholdForMap = 7; //3
 int KForMap = 10; //5
 
 string rootPath = "F:\\Tooth\\";
-string oriModelPath = "OriginalModel\\";//"TestOri\\";//
-string simModelPath = "15SimM2Model\\";//"TestSim2\\";// 
-string featurePath = "15SimM2Feature\\";//"TestFeature2\\";//  
+string oriModelPath = "180515-15OriModel\\";//"OriginalModel\\";//
+string simModelPath = "180515-15SimM2ModelNSFB\\";// "15SimM2Model\\";//
+string featurePath = "180515-15SimM2FeatureNSFB\\";//  "15SimM2Feature\\";//
 vector<string> modelPathList;
 void CreateDir(string dir);
 void ReadFiles(string rootpath, vector<string>& pathList);
@@ -125,8 +127,30 @@ SimplifyParameters sp;
 //面片数记录txt
 string recordForFaceLabel = "F:\\Tooth\\recordFor15SimM2FL.txt";
 
+//不同label面片颜色
+float faceLabelColors[16][3] = {
+	{ 0.50f, 0.50f, 0.50f },
+	{ 0.95f, 0.93f, 0.91f },
+	{ 0.86f, 0.09f, 0.03f },
+	{ 0.93f, 0.33f, 0.04f },
+	{ 0.95f, 0.61f, 0.10f },
+	{ 0.95f, 0.91f, 0.32f },
+	{ 0.69f, 0.82f, 0.27f },
+	{ 0.31f, 0.61f, 0.20f },
+	{ 0.04f, 0.38f, 0.05f },
+	{ 0.47f, 0.70f, 0.85f },
+	{ 0.23f, 0.55f, 0.81f },
+	{ 0.18f, 0.36f, 0.75f },
+	{ 0.39f, 0.09f, 0.73f },
+	{ 0.76f, 0.42f, 0.91f },
+	{ 0.88f, 0.37f, 0.52f },
+	{ 1.0f, 0.77f, 0.82f },
+};
+Mesh toothMesh2, toothMeshSeparated;//有气泡的模型2、分割过的没气泡的模型
+ANNkd_tree* buildANNTreeForMesh(Mesh& mesh);
+
 int main(int argc, char *argv[]) {
-	sp.d_ratio = simplifyRatio;
+	/*	sp.d_ratio = simplifyRatio;
 
 	string stl = "STL5\\";
 	string root = rootPath + oriModelPath + stl;
@@ -136,7 +160,7 @@ int main(int argc, char *argv[]) {
 	ofstream out_record_txt;
 	out_record_txt.open(recordForFaceLabel.c_str(),ios::ate);
 
-	for (size_t i = 0; i < modelPathList.size(); i++) {
+	for (size_t i = 23; i < modelPathList.size(); i++) {
 		if (breakNumver > 1)
 			break;
 		else breakNumver++;
@@ -162,11 +186,12 @@ int main(int argc, char *argv[]) {
 			Mesh OM2, OM3, SM2;
 			LoadMesh(OM2, oriM2P);
 			LoadMesh(OM3, oriM3P);
+			BuildLabelForBubbleNoise(OM2, OM3);
 			MeshSimplify ms;
 			ms.Simplify(OM2, simM2P + name + ".obj", sp);
 			LoadMesh(SM2, simM2P + name + ".obj");
 			//映射label
-			BuildLabelForBubbleNoise(OM2, OM3);
+			//BuildLabelForBubbleNoise(OM2, OM3);
 			mapLabelForBubbleNoise(OM2, SM2);
 			int* labelForTooth = new int[SM2.fList.size()];
 			int numForLabel1 = 0;
@@ -184,15 +209,16 @@ int main(int argc, char *argv[]) {
 		}
 		out_record_txt << endl;
 	}
-		out_record_txt.close();
+		out_record_txt.close();*/
 
-/*	glutInit(&argc, argv);
+	/*
+	glutInit(&argc, argv);
 	InitGL();
 	InitMenu();
-	string ori = "F:\\Tooth\\FinishOriModel\\STL5\\1625149\\2\\l2.stl";
-	string tar = "F:\\Tooth\\FinishOriModel\\STL5\\1625149\\3\\l3.stl";
-	string sim = "F:\\Tooth\\15SimM2Model\\STL5\\1625149\\l2.obj";
-	string txt = "F:\\Tooth\\Model\\180515-15SimM2Feature\\004_1625149L.txt";
+	string ori = "F:\\Tooth\\180515-15OriModel\\STL5\\1625037\\2\\l2.stl";
+	string tar = "F:\\Tooth\\180515-15OriModel\\STL5\\1625037\\3\\l3.stl";
+	string sim = "F:\\Tooth\\180515-15SimM2ModelNSFB\\STL5\\1625037\\l2.obj";
+	string txt = "F:\\Tooth\\Model\\180515-15SimM2FeatureNSFB\\001_1625037L.txt";
 	
 	LoadMesh(tooth, ori);
 	LoadMesh(tooth2, tar);
@@ -202,9 +228,97 @@ int main(int argc, char *argv[]) {
 	mapLabelForBubbleNoise(tooth, toothSimplify);
 	//remapLabelForBubbleNoise(toothSimplify, tooth);
 	BuildLabelFromLearning(toothSimplify, txt);
-	glutMainLoop();*/
+	glutMainLoop();
 	system("pause");
+	return 0;*/
+
+	glutInit(&argc, argv);
+	InitGL();
+	InitMenu();
+	string mesh2 = "F:\\Tooth\\\OriginalModel\\STL5\\1635634\\2\\李雪玉_2018-03-08_C01001635634_U.stl";
+	string meshSeparated = "F:\\Tooth\\SeparatedModel\\1635634\\U\\";
+	vector<string> meshSepList;
+	ReadFiles(meshSeparated, meshSepList);
+	LoadMesh(toothMesh2, mesh2);
+	SetBoundaryBox(toothMesh2.MinCoord(), toothMesh2.MaxCoord());
+	ANNkd_tree* mesh2Tree = buildANNTreeForMesh(toothMesh2);//为模型2建搜索树
+	for (int toothID = 0; toothID < meshSepList.size(); toothID++) {
+		LoadMesh(toothMeshSeparated, meshSeparated+ meshSepList[toothID]);
+		int  nearNum = 3;
+		int dim = 3;
+		double	eps = 0.1;		// error bound
+		ANNpoint			queryPt;				// query point
+		ANNidxArray			nnIdx;					// near neighbor indices
+		ANNdistArray		dists;					// near neighbor distances
+		queryPt = annAllocPt(dim);					// allocate query point
+		nnIdx = new ANNidx[nearNum];						// allocate near neigh indices
+		dists = new ANNdist[nearNum];						// allocate near neighbor dists
+
+		for (size_t i = 0; i < toothMeshSeparated.fList.size(); i++)
+		{
+			Face * f = toothMeshSeparated.fList[i];
+			if (f->GroupID() != toothMeshSeparated.maxGroupID) continue;
+			for (int j = 0; j < dim; j++)
+				queryPt[j] = f->center[j];
+
+			mesh2Tree->annkSearch(					// search
+				queryPt,						// query point
+				nearNum,								// number of near neighbors
+				nnIdx,							// nearest neighbors (returned)
+				dists,							// distance (returned)
+				eps);							// error bound
+
+			
+			toothMesh2.fList[nnIdx[0]]->faceLabel = toothID + 2;
+			
+			float tmp = 5.0;
+			if(dists[1]/dists[0] < tmp)
+				toothMesh2.fList[nnIdx[1]]->faceLabel = toothID + 2;
+			/*if (dists[2] / dists[0] < tmp)
+				toothMesh2.fList[nnIdx[2]]->faceLabel = toothID + 2;*/
+		}
+		delete[] nnIdx;
+		delete[] dists;
+	}
+	delete mesh2Tree;//删除搜索树
+	/**/
+	for (int i = 0; i < toothMesh2.fList.size(); i++) {
+		Face * f = toothMesh2.fList[i];
+		Face *f1, *f2, *f3;
+		f1 = f->HalfEdge()->Twin()->LeftFace();
+		f2 = f->HalfEdge()->Prev()->Twin()->LeftFace();
+		f3 = f->HalfEdge()->Next()->Twin()->LeftFace();
+		if (f1->faceLabel == f2->faceLabel && f2->faceLabel == f3->faceLabel)
+			f->faceLabel = f1->faceLabel;
+	}
+	glutMainLoop();
 	return 0;
+}
+
+ANNkd_tree* buildANNTreeForMesh(Mesh& mesh) {
+	int dim = 3;			// dimension
+	double	eps = 0.1;		// error bound
+	int maxPts = 1000000;  // maximum number of data points
+	int					nPts = (int)mesh.fList.size();					// actual number of data points
+	ANNpointArray		dataPts;				// data points
+	ANNkd_tree*			kdTree;					// search structure
+	dataPts = annAllocPts(maxPts, dim);			// allocate data points
+
+	for (size_t i = 0; i < mesh.fList.size(); i++)
+	{
+		for (int j = 0; j < dim; j++)
+		{
+			dataPts[i][j] = mesh.fList[i]->center[j];
+		}
+	}
+
+	// set up kd-tree
+	kdTree = new ANNkd_tree(		// build search structure
+		dataPts,					// the data points
+		nPts,						// number of points
+		dim);						// dimension of space
+
+	return kdTree;
 }
 
 void CreateDir(string dir)
@@ -438,6 +552,10 @@ void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut) {
 		//cout << distance << " ";
 		if (distance > threshold) {
 			meshWith.fList[i]->bubbleNoiseLabel = 1;
+			Face *f = meshWith.fList[i];
+			f->HalfEdge()->Start()->simplify_level = 1;
+			f->HalfEdge()->End()->simplify_level = 1;
+			f->HalfEdge()->Next()->End()->simplify_level = 1;
 			//cout << "BuildLabel:" << i << ":" << distance << " " << nnIdx[0] << endl;
 		}	
 		//meshWithOut.fList[nnIdx[0]]->center
@@ -516,7 +634,7 @@ void InitGL()
 	glEnable(GL_BLEND);
 
 	glutReshapeFunc(ReshapeFunc);
-	glutDisplayFunc(DisplayFunc);
+	glutDisplayFunc(DisplayFunc2);
 	glutKeyboardFunc(KeyboardFunc);
 	glutSpecialFunc(SpecialKeyFcn);
 	glutMouseFunc(MouseFunc);
@@ -563,6 +681,35 @@ void DisplayFunc()
 	{
 	case FLATSHADED:
 		DrawFlatShaded(toothSimplify, toothSimplify.maxGroupID);
+		break;
+	default:
+		break;
+	}
+	glPopMatrix();
+
+	glutSwapBuffers();
+}
+
+void DisplayFunc2()
+{
+	float rotation[16];
+	trackball.m_rotation.GetMatrix(rotation);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(g_fov, winAspect, zNear, zFar);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glPushMatrix();
+	glTranslated(xtrans, ytrans, -sdepth);
+	glMultMatrixf(rotation);
+	glTranslated(-g_center[0], -g_center[1], -g_center[2]);
+	switch (displayMode)
+	{
+	case FLATSHADED:
+		DrawFlatShaded2(toothMesh2, toothMesh2.maxGroupID);
 		break;
 	default:
 		break;
@@ -695,6 +842,34 @@ void DrawFlatShaded(Mesh & mesh, int groupID)
 				glColor3d(1.0f, 0.1f, 1.0f);
 			else 
 				glColor3d(0.4f, 0.4f, 0.4f);
+			glNormal3dv(normal.ToArray());
+			glVertex3dv(pos1.ToArray());
+			glVertex3dv(pos2.ToArray());
+			glVertex3dv(pos3.ToArray());
+		}
+	}
+	glEnd();
+	glDisable(GL_LIGHTING);
+}
+
+void DrawFlatShaded2(Mesh & mesh, int groupID)
+{
+	FaceList fList = mesh.Faces();
+	glShadeModel(GL_FLAT);
+	glEnable(GL_LIGHTING);
+	glColor3f(0.4f, 0.4f, 0.4f);
+	glBegin(GL_TRIANGLES);
+	for (size_t i = 0; i<fList.size(); i++) {
+		if (groupID < 0 || groupID == fList[i]->GroupID())
+		{
+			Face *f = fList[i];
+			const Vector3d & pos1 = f->HalfEdge()->Start()->Position();
+			const Vector3d & pos2 = f->HalfEdge()->End()->Position();
+			const Vector3d & pos3 = f->HalfEdge()->Next()->End()->Position();
+			Vector3d normal = (pos2 - pos1).Cross(pos3 - pos1);
+			normal /= normal.L2Norm();
+			float* faceColors = faceLabelColors[f->faceLabel];
+			glColor3d(faceColors[0], faceColors[1], faceColors[2]);//根据label设置颜色
 			glNormal3dv(normal.ToArray());
 			glVertex3dv(pos1.ToArray());
 			glVertex3dv(pos2.ToArray());
