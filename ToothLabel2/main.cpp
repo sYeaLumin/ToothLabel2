@@ -34,9 +34,10 @@ using namespace MeshSegmentation;
 enum EnumDisplayMode
 {
 	FLATSHADED = 50,
-	EDIT_LABEL,
 	PICK_LABEL,
-	SET_LABEL
+	SET_LABEL,
+	BUBBLE_LABEL,
+	RECORD_LABEL
 };
 
 // global variables
@@ -132,9 +133,10 @@ SimplifyParameters sp;
 string recordForFaceLabel = "F:\\Tooth\\recordFor15SimM2FL.txt";
 
 //不同label面片颜色
-float faceLabelColors[16][3] = {
+float faceLabelColors[18][3] = {
 	{ 0.50f, 0.50f, 0.50f },
 	{ 0.95f, 0.93f, 0.91f },
+	{ 0.64f, 0.03f, 0.00f },
 	{ 0.86f, 0.09f, 0.03f },
 	{ 0.93f, 0.33f, 0.04f },
 	{ 0.95f, 0.61f, 0.10f },
@@ -148,7 +150,8 @@ float faceLabelColors[16][3] = {
 	{ 0.39f, 0.09f, 0.73f },
 	{ 0.76f, 0.42f, 0.91f },
 	{ 0.88f, 0.37f, 0.52f },
-	{ 1.0f, 0.77f, 0.82f },
+	{ 0.92f, 0.50f, 0.64f },
+	{ 1.00f, 0.77f, 0.82f },
 };
 Mesh toothMesh2, toothMeshSeparated;//有气泡的模型2、分割过的没气泡的模型
 ANNkd_tree* buildANNTreeForMesh(Mesh& mesh);
@@ -169,6 +172,11 @@ int main(int argc, char *argv[]) {
 	ANNkd_tree* mesh2Tree = buildANNTreeForMesh(toothMesh2);//为模型2建搜索树
 	for (int toothID = 0; toothID < meshSepList.size(); toothID++) {
 		LoadMesh(toothMeshSeparated, meshSeparated+ meshSepList[toothID]);
+
+		size_t n = meshSepList[toothID].find_last_of(".");
+		string toothNumber = meshSepList[toothID].substr(n-1, n);
+		int tootNum = atoi(toothNumber.c_str());
+
 		int  nearNum = 3;
 		int dim = 3;
 		double	eps = 0.1;		// error bound
@@ -194,11 +202,11 @@ int main(int argc, char *argv[]) {
 				eps);							// error bound
 
 			
-			toothMesh2.fList[nnIdx[0]]->faceLabel = toothID + 2;
+			toothMesh2.fList[nnIdx[0]]->faceLabel = tootNum;
 			
 			float tmp = 5.0;
 			if(dists[1]/dists[0] < tmp)
-				toothMesh2.fList[nnIdx[1]]->faceLabel = toothID + 2;
+				toothMesh2.fList[nnIdx[1]]->faceLabel = tootNum;
 			/*if (dists[2] / dists[0] < tmp)
 				toothMesh2.fList[nnIdx[2]]->faceLabel = toothID + 2;*/
 		}
@@ -634,9 +642,9 @@ void DisplayFunc2()
 	switch (displayMode)
 	{
 	case FLATSHADED:
-	case EDIT_LABEL:
 	case PICK_LABEL:
 	case SET_LABEL:
+	case BUBBLE_LABEL:
 		DrawFlatShaded2(toothMesh2, toothMesh2.maxGroupID);
 		break;
 	default:
@@ -657,9 +665,10 @@ void InitMenu()
 	mainMenu = glutCreateMenu(MenuCallback);
 	glutAddSubMenu("Display", displayMenu);
 	glutAddMenuEntry("Load New Model", 100);
-	glutAddMenuEntry("Edit Label", EDIT_LABEL);
 	glutAddMenuEntry("Pick Label", PICK_LABEL);
 	glutAddMenuEntry("Set Label", SET_LABEL);
+	glutAddMenuEntry("Bubble Label", BUBBLE_LABEL);
+	glutAddMenuEntry("Record Label", RECORD_LABEL);
 	glutAddMenuEntry("Exit", 99);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
@@ -881,7 +890,7 @@ void SaveErrorSimplfiedModel()
 }
 
 void ModifyFunc(int x, int y) {
-	if (displayMode != EDIT_LABEL && displayMode != PICK_LABEL && displayMode != SET_LABEL)
+	if (displayMode != PICK_LABEL && displayMode != SET_LABEL && displayMode != BUBBLE_LABEL)
 		return;
 	DrawMeshWithDifferentColor(toothMesh2);//mesh!!!!
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -900,6 +909,9 @@ void ModifyFunc(int x, int y) {
 
 	if (displayMode == SET_LABEL)
 		TLE.setLabel(toothMesh2, pickedID);
+
+	if (displayMode == BUBBLE_LABEL)
+		TLE.setBubbleLabel(toothMesh2, pickedID);
 }
 
 // GLUT keyboard callback function
