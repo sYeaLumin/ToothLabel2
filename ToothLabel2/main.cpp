@@ -36,8 +36,10 @@ enum EnumDisplayMode
 	FLATSHADED = 50,
 	PICK_LABEL,
 	SET_LABEL,
+	SET_LABELS,
 	BUBBLE_LABEL,
-	RECORD_LABEL
+	RECORD_LABEL,
+	NEXT_MODEL
 };
 
 // global variables
@@ -645,6 +647,7 @@ void DisplayFunc2()
 	case FLATSHADED:
 	case PICK_LABEL:
 	case SET_LABEL:
+	case SET_LABELS:
 	case BUBBLE_LABEL:
 		DrawFlatShaded2(toothMesh2, toothMesh2.maxGroupID);
 		break;
@@ -659,17 +662,19 @@ void DisplayFunc2()
 // init right-click menu
 void InitMenu()
 {
-	displayMenu = glutCreateMenu(MenuCallback);
-	glutAddMenuEntry("Flat Shaded", FLATSHADED);
-
+	//displayMenu = glutCreateMenu(MenuCallback);
+	//glutAddMenuEntry("Flat Shaded", FLATSHADED);
 
 	mainMenu = glutCreateMenu(MenuCallback);
-	glutAddSubMenu("Display", displayMenu);
-	glutAddMenuEntry("Load New Model", 100);
+	//glutAddSubMenu("Display", FLATSHADED);
+	glutAddMenuEntry("Display", FLATSHADED);
+	//glutAddMenuEntry("Load New Model", 100);
 	glutAddMenuEntry("Pick Label", PICK_LABEL);
 	glutAddMenuEntry("Set Label", SET_LABEL);
+	glutAddMenuEntry("Set Labels", SET_LABELS);
 	glutAddMenuEntry("Bubble Label", BUBBLE_LABEL);
 	glutAddMenuEntry("Record Label", RECORD_LABEL);
+	glutAddMenuEntry("Next Model", NEXT_MODEL);
 	glutAddMenuEntry("Exit", 99);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
@@ -736,6 +741,12 @@ void MenuCallback(int value)
 		break;
 	case 99:
 		exit(0);
+		break;
+	case RECORD_LABEL:
+		//记录label
+		break;
+	case NEXT_MODEL:
+		//加载下一个模型
 		break;
 	default:
 		displayMode = value;
@@ -891,7 +902,8 @@ void SaveErrorSimplfiedModel()
 }
 
 void ModifyFunc(int x, int y) {
-	if (displayMode != PICK_LABEL && displayMode != SET_LABEL && displayMode != BUBBLE_LABEL)
+	if (displayMode != PICK_LABEL && displayMode != SET_LABEL && 
+		displayMode != BUBBLE_LABEL && displayMode != SET_LABELS)
 		return;
 	DrawMeshWithDifferentColor(toothMesh2);//mesh!!!!
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -910,6 +922,9 @@ void ModifyFunc(int x, int y) {
 
 	if (displayMode == SET_LABEL)
 		TLE.setLabel(toothMesh2, pickedID);
+
+	if (displayMode == SET_LABELS)
+		TLE.setLabels(toothMesh2, pickedID);
 
 	if (displayMode == BUBBLE_LABEL)
 		TLE.setBubbleLabel(toothMesh2, pickedID);

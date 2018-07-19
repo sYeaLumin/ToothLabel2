@@ -40,11 +40,18 @@ void ToothLabelEditor::setLabel(Mesh & mesh, int pickedID)
 	mesh.fList[pickedID]->SetFaceLabel(pickedLabel);
 }
 
+void ToothLabelEditor::setLabels(Mesh & mesh, int pickedID)
+{
+	if (pickedID >= mesh.fList.size() || pickedID < 0)
+		return;
+	setAreaLabel(mesh.fList[pickedID], pickedLabel);
+}
+
 void ToothLabelEditor::setBubbleLabel(Mesh & mesh, int pickedID)
 {
 	if (pickedID >= mesh.fList.size() || pickedID < 0)
 		return;
-	setBubbleLabels(mesh.fList[pickedID]);
+	setAreaLabel(mesh.fList[pickedID], bubbleLabel);
 }
 
 int ToothLabelEditor::getLColor(int ID)
@@ -52,11 +59,11 @@ int ToothLabelEditor::getLColor(int ID)
 	return LColors[ID];
 }
 
-void ToothLabelEditor::setBubbleLabels(Face *f)
+void ToothLabelEditor::setAreaLabel(Face *f, int label)
 {
 	if (f->faceLabel != blankLabel)
 		return;
-	f->SetFaceLabel(bubbleLabelNum);
+	f->SetFaceLabel(label);
 
 	Face *f1, *f2, *f3;
 	f1 = f->HalfEdge()->Twin()->LeftFace();
@@ -68,9 +75,9 @@ void ToothLabelEditor::setBubbleLabels(Face *f)
 		return;
 
 	if (f1->faceLabel == blankLabel)
-		setBubbleLabels(f1);
+		setAreaLabel(f1, label);
 	if (f2->faceLabel == blankLabel)
-		setBubbleLabels(f2);
+		setAreaLabel(f2, label);
 	if (f3->faceLabel == blankLabel)
-		setBubbleLabels(f3);
+		setAreaLabel(f3, label);
 }

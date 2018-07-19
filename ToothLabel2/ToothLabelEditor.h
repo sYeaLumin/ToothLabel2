@@ -12,14 +12,15 @@ public:
 	~ToothLabelEditor();
 	void pickLabel(Mesh & mesh, int pickedID);
 	void setLabel(Mesh & mesh, int pickedID);
+	void setLabels(Mesh & mesh, int pickedID);
 	void setBubbleLabel(Mesh & mesh, int pickedID);
 	int getLColor(int ID);
 
 private:
-	void setBubbleLabels(Face *f);
+	void setAreaLabel(Face *f, int label);
 
 public:	
-	int bubbleLabelNum = 1;//气泡的label
+	int bubbleLabel = 1;//气泡的label
 	int blankLabel = 0;//空白label
 
 private:
