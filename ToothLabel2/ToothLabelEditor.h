@@ -13,9 +13,9 @@ public:
 	void pickLabel(Mesh & mesh, int pickedID);
 	void setLabel(Mesh & mesh, int pickedID);
 	void setBubbleLabel(Mesh & mesh, int pickedID);
+	int getLColor(int ID);
 
 private:
-	map<int, int> LColors;
 	void setBubbleLabels(Face *f);
 
 public:	
@@ -24,6 +24,7 @@ public:
 
 private:
 	int pickedLabel = 0;//当前修改的label类型
+	map<int, int> LColors;
 	//vector<int> pickedIDList;//选中的面片列表
 };
 

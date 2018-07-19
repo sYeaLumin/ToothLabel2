@@ -174,8 +174,9 @@ int main(int argc, char *argv[]) {
 		LoadMesh(toothMeshSeparated, meshSeparated+ meshSepList[toothID]);
 
 		size_t n = meshSepList[toothID].find_last_of(".");
-		string toothNumber = meshSepList[toothID].substr(n-1, n);
-		int tootNum = atoi(toothNumber.c_str());
+		string toothNumber = meshSepList[toothID].substr(n-2, n);
+		int toothNum = atoi(toothNumber.c_str());
+		cout << "ToothNum:" << toothNum << endl;
 
 		int  nearNum = 3;
 		int dim = 3;
@@ -202,13 +203,13 @@ int main(int argc, char *argv[]) {
 				eps);							// error bound
 
 			
-			toothMesh2.fList[nnIdx[0]]->faceLabel = tootNum;
+			toothMesh2.fList[nnIdx[0]]->faceLabel = toothNum;
 			
 			float tmp = 5.0;
 			if(dists[1]/dists[0] < tmp)
-				toothMesh2.fList[nnIdx[1]]->faceLabel = tootNum;
+				toothMesh2.fList[nnIdx[1]]->faceLabel = toothNum;
 			/*if (dists[2] / dists[0] < tmp)
-				toothMesh2.fList[nnIdx[2]]->faceLabel = toothID + 2;*/
+				toothMesh2.fList[nnIdx[2]]->faceLabel = tootNum;*/
 		}
 		delete[] nnIdx;
 		delete[] dists;
@@ -808,7 +809,7 @@ void DrawFlatShaded2(Mesh & mesh, int groupID)
 			const Vector3d & pos3 = f->HalfEdge()->Next()->End()->Position();
 			Vector3d normal = (pos2 - pos1).Cross(pos3 - pos1);
 			normal /= normal.L2Norm();
-			float* faceColors = faceLabelColors[f->faceLabel];
+			float* faceColors = faceLabelColors[TLE.getLColor(f->faceLabel)];
 			glColor3d(faceColors[0], faceColors[1], faceColors[2]);//根据label设置颜色
 			glNormal3dv(normal.ToArray());
 			glVertex3dv(pos1.ToArray());
@@ -901,8 +902,8 @@ void ModifyFunc(int x, int y) {
 
 	if (pickedID == 0x00ffffff)
 		pickedID = -1;
-	else
-		cout << "pickedID: " << pickedID << endl;
+	//else
+		//cout << "pickedID: " << pickedID << endl;
 
 	if (displayMode == PICK_LABEL)
 		TLE.pickLabel(toothMesh2, pickedID);

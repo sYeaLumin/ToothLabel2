@@ -47,6 +47,11 @@ void ToothLabelEditor::setBubbleLabel(Mesh & mesh, int pickedID)
 	setBubbleLabels(mesh.fList[pickedID]);
 }
 
+int ToothLabelEditor::getLColor(int ID)
+{
+	return LColors[ID];
+}
+
 void ToothLabelEditor::setBubbleLabels(Face *f)
 {
 	if (f->faceLabel != blankLabel)
