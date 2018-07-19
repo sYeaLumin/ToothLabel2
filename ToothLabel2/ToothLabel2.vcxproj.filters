@@ -102,9 +102,6 @@
     <ClInclude Include="Mesh\mesh.h">
       <Filter>Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh\vector3.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="MeshDecimation\mdMeshDecimator.h">
       <Filter>MeshDecimation</Filter>
     </ClInclude>
@@ -188,6 +185,9 @@
     </ClInclude>
     <ClInclude Include="ToothLabelEditor.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\vector3.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
