@@ -160,13 +160,42 @@ ANNkd_tree* buildANNTreeForMesh(Mesh& mesh);
 
 //面片Label编辑
 ToothLabelEditor TLE;
+string mesh2Root = "F:\\Tooth\\OriginalModel\\";
+string meshSepartedRoot = "F:\\Tooth\\SeparatedModel\\reshape_ddm\\";
+string meshNumberListTXT = "F:\\Tooth\\meshNumberList.txt";
+string meshLabelRoot = "F:\\Tooth\\180721Label\\";
+string meshLabelTXT;
+vector<string> meshNumberList;
+vector<string> meshNameList;
+int meshNumber = -1;
+void nextModel();
+
+//string mesh2 = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\1635634\\2\\李雪玉_2018-03-08_C01001635634_U.stl";
+//string meshSeparated = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\1635634\\U\\";
+string mesh2 = "F:\\Tooth\\OriginalModel\\1635634\\2\\李雪玉_2018-03-08_C01001635634_U.stl";
+string meshSeparated = "F:\\Tooth\\SeparatedModel\\1635634\\U\\";
 
 int main(int argc, char *argv[]) {
 	glutInit(&argc, argv);
 	InitGL();
 	InitMenu();
-	string mesh2 = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\1635634\\2\\李雪玉_2018-03-08_C01001635634_U.stl";
-	string meshSeparated = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\1635634\\U\\";
+
+	//读取txt里的mesh标号
+	ifstream txt;
+	txt.open(meshNumberListTXT, ifstream::in);
+	int i = 0;
+	while (!txt.eof()) {
+		string s;
+		getline(txt, s);
+		istringstream is(s);
+		string meshNumber;
+		is >> meshNumber;
+		meshNumberList.push_back(meshNumber);
+	}
+	txt.close();
+
+	mesh2 = mesh2Root + meshNumberList[0] + "\\2\\";
+	/*
 	vector<string> meshSepList;
 	ReadFiles(meshSeparated, meshSepList);
 	LoadMesh(toothMesh2, mesh2);
@@ -210,14 +239,84 @@ int main(int argc, char *argv[]) {
 			float tmp = 5.0;
 			if(dists[1]/dists[0] < tmp)
 				toothMesh2.fList[nnIdx[1]]->faceLabel = toothNum;
-			/*if (dists[2] / dists[0] < tmp)
-				toothMesh2.fList[nnIdx[2]]->faceLabel = tootNum;*/
+			//if (dists[2] / dists[0] < tmp)
+				//toothMesh2.fList[nnIdx[2]]->faceLabel = tootNum;
 		}
 		delete[] nnIdx;
 		delete[] dists;
 	}
 	delete mesh2Tree;//删除搜索树
-	/**/
+	for (int i = 0; i < toothMesh2.fList.size(); i++) {
+		Face * f = toothMesh2.fList[i];
+		Face *f1, *f2, *f3;
+		f1 = f->HalfEdge()->Twin()->LeftFace();
+		f2 = f->HalfEdge()->Prev()->Twin()->LeftFace();
+		f3 = f->HalfEdge()->Next()->Twin()->LeftFace();
+		if (f1->faceLabel == f2->faceLabel && f2->faceLabel == f3->faceLabel)
+			f->faceLabel = f1->faceLabel;
+	}*/
+	
+	nextModel();
+
+	glutMainLoop();
+	return 0;
+}
+
+void prepareModel() {
+
+	toothMesh2.Clear();
+	toothMeshSeparated.Clear();
+
+	vector<string> meshSepList;
+	ReadFiles(meshSeparated, meshSepList);
+	LoadMesh(toothMesh2, mesh2);
+	SetBoundaryBox(toothMesh2.MinCoord(), toothMesh2.MaxCoord());
+	ANNkd_tree* mesh2Tree = buildANNTreeForMesh(toothMesh2);//为模型2建搜索树
+	for (int toothID = 0; toothID < meshSepList.size(); toothID++) {
+		LoadMesh(toothMeshSeparated, meshSeparated + meshSepList[toothID]);
+
+		size_t n = meshSepList[toothID].find_last_of(".");
+		string toothNumber = meshSepList[toothID].substr(n - 2, n);
+		int toothNum = atoi(toothNumber.c_str());
+		cout << "ToothNum:" << toothNum << endl;
+
+		int  nearNum = 3;
+		int dim = 3;
+		double	eps = 0.1;		// error bound
+		ANNpoint			queryPt;				// query point
+		ANNidxArray			nnIdx;					// near neighbor indices
+		ANNdistArray		dists;					// near neighbor distances
+		queryPt = annAllocPt(dim);					// allocate query point
+		nnIdx = new ANNidx[nearNum];						// allocate near neigh indices
+		dists = new ANNdist[nearNum];						// allocate near neighbor dists
+
+		for (size_t i = 0; i < toothMeshSeparated.fList.size(); i++)
+		{
+			Face * f = toothMeshSeparated.fList[i];
+			if (f->GroupID() != toothMeshSeparated.maxGroupID) continue;
+			for (int j = 0; j < dim; j++)
+				queryPt[j] = f->center[j];
+
+			mesh2Tree->annkSearch(					// search
+				queryPt,						// query point
+				nearNum,								// number of near neighbors
+				nnIdx,							// nearest neighbors (returned)
+				dists,							// distance (returned)
+				eps);							// error bound
+
+			toothMesh2.fList[nnIdx[0]]->faceLabel = toothNum;
+
+			float tmp = 5.0;
+			if (dists[1] / dists[0] < tmp)
+				toothMesh2.fList[nnIdx[1]]->faceLabel = toothNum;
+			//if (dists[2] / dists[0] < tmp)
+			//toothMesh2.fList[nnIdx[2]]->faceLabel = tootNum;
+		}
+		delete[] nnIdx;
+		delete[] dists;
+	}
+	delete mesh2Tree;//删除搜索树
+
 	for (int i = 0; i < toothMesh2.fList.size(); i++) {
 		Face * f = toothMesh2.fList[i];
 		Face *f1, *f2, *f3;
@@ -227,10 +326,44 @@ int main(int argc, char *argv[]) {
 		if (f1->faceLabel == f2->faceLabel && f2->faceLabel == f3->faceLabel)
 			f->faceLabel = f1->faceLabel;
 	}
-	glutMainLoop();
-	return 0;
 }
 
+void nextModel() {
+	if (meshNameList.size() == 0) {
+		meshNumber++;
+		string tmpPath = mesh2Root + meshNumberList[meshNumber] + "\\2\\";
+		ReadFiles(tmpPath, meshNameList);
+	}
+	mesh2 = mesh2Root + meshNumberList[meshNumber] + "\\2\\" + meshNameList[meshNameList.size() - 1];
+	meshSeparated = meshSepartedRoot + "C0100" + meshNumberList[meshNumber];
+	meshLabelTXT = meshNumberList[meshNumber];
+	size_t tmp = mesh2.find_last_of(".");
+	if (mesh2.substr(tmp - 1, tmp) == "L.stl") {
+		meshSeparated += "\\C01001L01\\";
+		meshLabelTXT += "L.txt";
+	}
+	if (mesh2.substr(tmp - 1, tmp) == "U.stl") {
+		meshSeparated += "\\C01001U01\\";
+		meshLabelTXT += "U.txt";
+	}
+	cout << meshSeparated << endl;
+
+	meshNameList.pop_back();
+	prepareModel();
+}
+
+void recordLabel() {
+	ofstream labelTXT(meshLabelRoot + meshLabelTXT);
+	if (labelTXT.is_open()) {
+		cout << "recording..." << endl;
+		for (int i = 0; i < toothMesh2.fList.size(); i++) {
+			labelTXT << i << " " << toothMesh2.fList[i]->faceLabel << endl;
+		}
+	}
+	labelTXT.close();
+}
+
+//为模型建ANN树
 ANNkd_tree* buildANNTreeForMesh(Mesh& mesh) {
 	int dim = 3;			// dimension
 	double	eps = 0.1;		// error bound
@@ -257,6 +390,7 @@ ANNkd_tree* buildANNTreeForMesh(Mesh& mesh) {
 	return kdTree;
 }
 
+//创建新目录
 void CreateDir(string dir)
 {
 	int m = 0, n;
@@ -280,6 +414,7 @@ void CreateDir(string dir)
 	}
 }
 
+//通过txt记录的面片标签设置模型Label
 void BuildLabelFromLearning(Mesh& mesh, string txtPath) {
 	ifstream txt;
 	txt.open(txtPath, ifstream::in);
@@ -503,6 +638,7 @@ void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut) {
 	annClose();
 }
 
+//读取下级目录到vector
 void ReadFiles(string rootpath, vector<string>& pathList)
 {
 	struct _finddata_t fa;
@@ -744,9 +880,11 @@ void MenuCallback(int value)
 		break;
 	case RECORD_LABEL:
 		//记录label
+		recordLabel();
 		break;
 	case NEXT_MODEL:
 		//加载下一个模型
+		nextModel();
 		break;
 	default:
 		displayMode = value;

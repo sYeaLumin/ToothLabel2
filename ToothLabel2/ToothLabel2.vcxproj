@@ -80,8 +80,8 @@
     <LibraryPath>E:\PROJECTS\vs\Tooth\ToothLabel2\ToothLabel2\ann_1.1.2\lib\x86;E:\library\freeglut3\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>D:\library\freeglut3\include;$(IncludePath)</IncludePath>
-    <LibraryPath>.\clapack\x86;D:\library\freeglut3\lib;.\ann_1.1.2\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\library\freeglut3\include;E:\library\freeglut3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\clapack\x86;E:\library\freeglut3\lib;D:\library\freeglut3\lib;.\ann_1.1.2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

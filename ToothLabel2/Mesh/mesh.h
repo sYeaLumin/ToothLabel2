@@ -63,20 +63,6 @@ namespace BiMesh
 			flag = false;
 		}
 		~HEdge() {
-			/*
-			if (twin != NULL)
-				delete twin;
-			if (prev != NULL)
-				delete prev;
-			if (next != NULL)
-				delete next;
-			if (start != NULL)
-				delete start;
-			if (face != NULL)
-				delete face;*/
-			//delete twin, prev, next;
-			//delete start;
-			//delete face;
 		}
 
 		HEdge*  Twin() const { return twin; }
@@ -373,6 +359,20 @@ namespace BiMesh
 			pointareas.clear();
 			normals.clear();
 			seedList.clear();
+
+			heList.shrink_to_fit();
+			bheList.shrink_to_fit();
+			vList.shrink_to_fit();
+			fList.shrink_to_fit();
+
+			curv1.shrink_to_fit();
+			curv2.shrink_to_fit();
+			pdir1.shrink_to_fit();
+			pdir2.shrink_to_fit();
+			cornerareas.shrink_to_fit();
+			pointareas.shrink_to_fit();
+			normals.shrink_to_fit();
+			seedList.shrink_to_fit();
 		}
 
 		Vector3d MinCoord() const
