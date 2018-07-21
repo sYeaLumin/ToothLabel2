@@ -43,6 +43,8 @@ void ToothLabelEditor::setLabels(Mesh & mesh, int pickedID)
 {
 	if (pickedID >= mesh.fList.size() || pickedID < 0)
 		return;
+	if (pickedLabel == mesh.fList[pickedID]->FaceLabel())
+		return;
 	setAreaLabel(mesh.fList[pickedID], pickedLabel, mesh.fList[pickedID]->FaceLabel());
 }
 
