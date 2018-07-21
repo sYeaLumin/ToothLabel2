@@ -958,7 +958,7 @@ void DrawFlatShaded2(Mesh & mesh, int groupID)
 			const Vector3d & pos3 = f->HalfEdge()->Next()->End()->Position();
 			Vector3d normal = (pos2 - pos1).Cross(pos3 - pos1);
 			normal /= normal.L2Norm();
-			float* faceColors = faceLabelColors[TLE.getLColor(f->faceLabel)];
+			float* faceColors = faceLabelColors[TLE.getLColor(f->FaceLabel())];
 			glColor3d(faceColors[0], faceColors[1], faceColors[2]);//根据label设置颜色
 			glNormal3dv(normal.ToArray());
 			glVertex3dv(pos1.ToArray());

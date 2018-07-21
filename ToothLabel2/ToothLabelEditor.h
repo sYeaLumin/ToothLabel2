@@ -17,10 +17,10 @@ public:
 	int getLColor(int ID);
 
 private:
-	void setAreaLabel(Face *f, int label);
+	void setAreaLabel(Face *f, int label1, int label2);
 
 public:	
-	int bubbleLabel = 1;//气泡的label
+	int bubbleLabel = 100;//气泡的label
 	int blankLabel = 0;//空白label
 
 private:
