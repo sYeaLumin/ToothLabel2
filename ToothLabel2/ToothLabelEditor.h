@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <vector>
+#include <fstream>
 #include "Mesh\mesh.h"
 using namespace std;
 using namespace BiMesh;
@@ -14,7 +15,10 @@ public:
 	void setLabel(Mesh & mesh, int pickedID);
 	void setLabels(Mesh & mesh, int pickedID);
 	void setBubbleLabel(Mesh & mesh, int pickedID);
+	void recordLabel(Mesh & mesh, string labelTXT);
 	int getLColor(int ID);
+	void setCSV(string path);
+	void cleanRecord();
 
 private:
 	void setAreaLabel(Face *f, int label1, int label2);
@@ -25,7 +29,8 @@ public:
 
 private:
 	int pickedLabel = 0;//当前修改的label类型
+	int csvRecord[64];
 	map<int, int> LColors;
-	//vector<int> pickedIDList;//选中的面片列表
+	string csvRecordPath;
 };
 

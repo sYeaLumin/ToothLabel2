@@ -17,8 +17,10 @@ ToothLabelEditor::ToothLabelEditor()
 	//×óÏÂ
 	LColors[31] = 10; LColors[32] = 11; LColors[33] = 12; LColors[34] = 13;
 	LColors[35] = 14; LColors[36] = 15; LColors[37] = 16; LColors[38] = 17;
-}
 
+	for (int i = 0; i < 64; i++)
+		csvRecord[i] = 0;
+}
 
 ToothLabelEditor::~ToothLabelEditor()
 {
@@ -55,12 +57,59 @@ void ToothLabelEditor::setBubbleLabel(Mesh & mesh, int pickedID)
 	setAreaLabel(mesh.fList[pickedID], bubbleLabel + pickedLabel, blankLabel);
 }
 
+void ToothLabelEditor::recordLabel(Mesh & mesh, string labelTXTPath)
+{
+	ofstream labelTXT(labelTXTPath);
+	if (labelTXT.is_open()) {
+		cout << "Recording..." << endl;
+		for (int i = 0; i < mesh.fList.size(); i++) {
+			int L = mesh.fList[i]->faceLabel;
+			labelTXT << i << " " << L << endl;
+			if (L == 0)
+				continue;
+			int tmp = L;
+			if (L > 100)
+				tmp = ((((L - 100) / 10) - 1) * 8 + ((L - 100) % 10)) * 2 - 1;
+			else
+				tmp = (((L / 10) - 1) * 8 + (L % 10)) * 2 - 2;
+			csvRecord[tmp]++;
+		}
+	}
+	labelTXT.close();
+
+	ofstream labelCSV(csvRecordPath, ios::app);
+	int p1 = labelTXTPath.find_last_of("\\");
+	int p2 = labelTXTPath.find_last_of(".");
+	labelCSV << labelTXTPath.substr(p1 + 1, p2- p1-1).c_str() << ",";
+	for (int i = 0; i < 64; i++){
+		if ((i + 1) % 16 == 0)
+			labelCSV << csvRecord[i] << "," << " " << ",";
+		else
+			labelCSV << csvRecord[i] << ",";
+	}
+	labelCSV << endl;
+	labelCSV.close();
+
+	cout << "Finished !" << endl;
+}
+
 int ToothLabelEditor::getLColor(int ID)
 {
 	if (ID < 100)
 		return LColors[ID];
 	else
 		return 1;
+}
+
+void ToothLabelEditor::setCSV(string path)
+{
+	csvRecordPath = path;
+}
+
+void ToothLabelEditor::cleanRecord()
+{
+	for (int i = 0; i < 64; i++)
+		csvRecord[i] = 0;
 }
 
 void ToothLabelEditor::setAreaLabel(Face *f, int label1, int label2)

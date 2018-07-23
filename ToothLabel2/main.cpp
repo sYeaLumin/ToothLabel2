@@ -39,7 +39,8 @@ enum EnumDisplayMode
 	SET_LABELS,
 	BUBBLE_LABEL,
 	RECORD_LABEL,
-	NEXT_MODEL
+	NEXT_MODEL,
+	LOAD_LABEL
 };
 
 // global variables
@@ -108,7 +109,7 @@ void MouseWheelFunc(int button, int dir, int x, int y);
 void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut);
 void mapLabelForBubbleNoise(Mesh & mesh, Mesh & meshSiplify);
 void remapLabelForBubbleNoise(Mesh & meshSiplify, Mesh & mesh);
-void BuildLabelFromLearning(Mesh& mesh, string txtPath);
+void BuildLabelFromTXT(Mesh& mesh, string txtPath);
 
 //模型ANN映射参数
 double threshold = 0.1; //0.15
@@ -160,6 +161,7 @@ ANNkd_tree* buildANNTreeForMesh(Mesh& mesh);
 
 //面片Label编辑
 ToothLabelEditor TLE;
+string csvPath = "F:\\Tooth\\labelEditor.csv";
 string mesh2Root = "F:\\Tooth\\OriginalModel\\";
 string meshSepartedRoot = "F:\\Tooth\\SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "F:\\Tooth\\meshNumberList.txt";
@@ -180,6 +182,8 @@ int main(int argc, char *argv[]) {
 	InitGL();
 	InitMenu();
 
+	//设置csv记录文件
+	TLE.setCSV(csvPath);
 	//读取txt里的mesh标号
 	ifstream txt;
 	txt.open(meshNumberListTXT, ifstream::in);
@@ -329,6 +333,9 @@ void prepareModel() {
 }
 
 void nextModel() {
+
+	TLE.cleanRecord();
+
 	if (meshNameList.size() == 0) {
 		meshNumber++;
 		string tmpPath = mesh2Root + meshNumberList[meshNumber] + "\\2\\";
@@ -338,11 +345,16 @@ void nextModel() {
 	meshSeparated = meshSepartedRoot + "C0100" + meshNumberList[meshNumber];
 	meshLabelTXT = meshNumberList[meshNumber];
 	size_t tmp = mesh2.find_last_of(".");
-	if (mesh2.substr(tmp - 1, tmp) == "L.stl") {
+	string::size_type idx1, idx2;
+	idx1 = mesh2.substr(tmp - 2, 2).find("L");
+	idx2 = mesh2.substr(tmp - 2, 2).find("l");
+	if (idx1 != string::npos || idx2 != string::npos) {
 		meshSeparated += "\\C01001L01\\";
 		meshLabelTXT += "L.txt";
 	}
-	if (mesh2.substr(tmp - 1, tmp) == "U.stl") {
+	idx1 = mesh2.substr(tmp - 2, 2).find("U");
+	idx2 = mesh2.substr(tmp - 2, 2).find("u");
+	if (idx1 != string::npos || idx2 != string::npos) {
 		meshSeparated += "\\C01001U01\\";
 		meshLabelTXT += "U.txt";
 	}
@@ -350,17 +362,6 @@ void nextModel() {
 
 	meshNameList.pop_back();
 	prepareModel();
-}
-
-void recordLabel() {
-	ofstream labelTXT(meshLabelRoot + meshLabelTXT);
-	if (labelTXT.is_open()) {
-		cout << "recording..." << endl;
-		for (int i = 0; i < toothMesh2.fList.size(); i++) {
-			labelTXT << i << " " << toothMesh2.fList[i]->faceLabel << endl;
-		}
-	}
-	labelTXT.close();
 }
 
 //为模型建ANN树
@@ -415,9 +416,10 @@ void CreateDir(string dir)
 }
 
 //通过txt记录的面片标签设置模型Label
-void BuildLabelFromLearning(Mesh& mesh, string txtPath) {
+void BuildLabelFromTXT(Mesh& mesh, string txtPath) {
 	ifstream txt;
 	txt.open(txtPath, ifstream::in);
+	cout << txtPath << endl;
 	int i = 0;
 	while (!txt.eof()) {
 		string s;
@@ -425,7 +427,7 @@ void BuildLabelFromLearning(Mesh& mesh, string txtPath) {
 		istringstream is(s);
 		string faceNum, label;
 		is >> faceNum >> label;
-		mesh.fList[atoi(faceNum.c_str())]->bubbleNoiseLabelResult = atoi(label.c_str());
+		mesh.fList[atoi(faceNum.c_str())]->faceLabel = atoi(label.c_str());
 		i += 1;
 		if (i % 1000 == 0)
 			cout << ".";
@@ -809,6 +811,7 @@ void InitMenu()
 	glutAddMenuEntry("Set Label", SET_LABEL);
 	glutAddMenuEntry("Set Labels", SET_LABELS);
 	glutAddMenuEntry("Bubble Label", BUBBLE_LABEL);
+	glutAddMenuEntry("Lord Label", LOAD_LABEL);
 	glutAddMenuEntry("Record Label", RECORD_LABEL);
 	glutAddMenuEntry("Next Model", NEXT_MODEL);
 	glutAddMenuEntry("Exit", 99);
@@ -880,11 +883,14 @@ void MenuCallback(int value)
 		break;
 	case RECORD_LABEL:
 		//记录label
-		recordLabel();
+		TLE.recordLabel(toothMesh2, meshLabelRoot + meshLabelTXT);
 		break;
 	case NEXT_MODEL:
 		//加载下一个模型
 		nextModel();
+		break;
+	case LOAD_LABEL:
+		BuildLabelFromTXT(toothMesh2, meshLabelRoot + meshLabelTXT);
 		break;
 	default:
 		displayMode = value;
