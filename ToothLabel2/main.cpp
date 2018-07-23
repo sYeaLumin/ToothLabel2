@@ -327,6 +327,8 @@ void prepareModel() {
 		f1 = f->HalfEdge()->Twin()->LeftFace();
 		f2 = f->HalfEdge()->Prev()->Twin()->LeftFace();
 		f3 = f->HalfEdge()->Next()->Twin()->LeftFace();
+		if (f1 == NULL || f2 == NULL || f3 == NULL)
+			continue;
 		if (f1->faceLabel == f2->faceLabel && f2->faceLabel == f3->faceLabel)
 			f->faceLabel = f1->faceLabel;
 	}
