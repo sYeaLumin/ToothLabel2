@@ -308,7 +308,9 @@ void prepareModel() {
 				dists,							// distance (returned)
 				eps);							// error bound
 
-			toothMesh2.fList[nnIdx[0]]->faceLabel = toothNum;
+			//toothMesh2.fList[nnIdx[0]]->faceLabel = toothNum;
+			if(dists[0] < 0.1)
+				toothMesh2.fList[nnIdx[0]]->faceLabel = toothNum;
 
 			float tmp = 5.0;
 			if (dists[1] / dists[0] < tmp)
@@ -348,14 +350,14 @@ void nextModel() {
 	meshLabelTXT = meshNumberList[meshNumber];
 	size_t tmp = mesh2.find_last_of(".");
 	string::size_type idx1, idx2;
-	idx1 = mesh2.substr(tmp - 2, 2).find("L");
-	idx2 = mesh2.substr(tmp - 2, 2).find("l");
+	idx1 = mesh2.substr(tmp - 3, 3).find("L");
+	idx2 = mesh2.substr(tmp - 3, 3).find("l");
 	if (idx1 != string::npos || idx2 != string::npos) {
 		meshSeparated += "\\C01001L01\\";
 		meshLabelTXT += "L.txt";
 	}
-	idx1 = mesh2.substr(tmp - 2, 2).find("U");
-	idx2 = mesh2.substr(tmp - 2, 2).find("u");
+	idx1 = mesh2.substr(tmp - 3, 3).find("U");
+	idx2 = mesh2.substr(tmp - 3, 3).find("u");
 	if (idx1 != string::npos || idx2 != string::npos) {
 		meshSeparated += "\\C01001U01\\";
 		meshLabelTXT += "U.txt";
