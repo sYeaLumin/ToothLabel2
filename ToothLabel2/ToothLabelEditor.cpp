@@ -1,9 +1,5 @@
 #include "ToothLabelEditor.h"
 
-struct POS {
-	int x, y;
-};
-
 ToothLabelEditor::ToothLabelEditor()
 {
 	LColors[0] = 0; //ÑÀö¸
@@ -50,16 +46,6 @@ void ToothLabelEditor::setLabels(Mesh & mesh, int pickedID)
 	if (pickedLabel == mesh.fList[pickedID]->FaceLabel())
 		return;
 	setAreaLabel(mesh.fList[pickedID], pickedLabel, mesh.fList[pickedID]->FaceLabel());
-}
-
-bool ifNeighboor(Face* f, Face* fnext) {
-	Face *f1, *f2, *f3;
-	f1 = f->HalfEdge()->Twin()->LeftFace();
-	f2 = f->HalfEdge()->Prev()->Twin()->LeftFace();
-	f3 = f->HalfEdge()->Next()->Twin()->LeftFace();
-	if (f1 != fnext && f2 != fnext && f3 != fnext)
-		return false;
-	else return true;
 }
 
 void ToothLabelEditor::paintLabels(Mesh & mesh, vector<int>& pos)
@@ -171,27 +157,4 @@ void ToothLabelEditor::setAreaLabel(Face *f, int label1, int label2)
 		setAreaLabel(f2, label1, label2);
 	if (f3->faceLabel == label2)
 		setAreaLabel(f3, label1, label2);
-}
-
-void ToothLabelEditor::setRingLabel(Face * f, int labelRing)
-{
-	if (f->faceLabel == labelRing)
-		return;
-	f->SetFaceLabel(labelRing);
-
-	Face *f1, *f2, *f3;
-	f1 = f->HalfEdge()->Twin()->LeftFace();
-	f2 = f->HalfEdge()->Prev()->Twin()->LeftFace();
-	f3 = f->HalfEdge()->Next()->Twin()->LeftFace();
-	if (f1->faceLabel == labelRing &&
-		f2->faceLabel == labelRing &&
-		f3->faceLabel == labelRing)
-		return;
-
-	if (f1->faceLabel != labelRing)
-		setRingLabel(f1, labelRing);
-	if (f2->faceLabel != labelRing)
-		setRingLabel(f2, labelRing);
-	if (f3->faceLabel != labelRing)
-		setRingLabel(f3, labelRing);
 }
