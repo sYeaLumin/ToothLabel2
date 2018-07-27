@@ -2,7 +2,9 @@
 #include <map>
 #include <vector>
 #include <fstream>
+#include <GL\freeglut.h>
 #include "Mesh\mesh.h"
+
 using namespace std;
 using namespace BiMesh;
 
@@ -14,6 +16,7 @@ public:
 	void pickLabel(Mesh & mesh, int pickedID);
 	void setLabel(Mesh & mesh, int pickedID);
 	void setLabels(Mesh & mesh, int pickedID);
+	void paintLabels(Mesh & mesh, vector<int>& pos);
 	void setBubbleLabel(Mesh & mesh, int pickedID);
 	void recordLabel(Mesh & mesh, string labelTXT);
 	int getLColor(int ID);
@@ -22,6 +25,7 @@ public:
 
 private:
 	void setAreaLabel(Face *f, int label1, int label2);
+	void setRingLabel(Face *f, int labelRing);
 
 public:	
 	int bubbleLabel = 100;//气泡的label
@@ -29,6 +33,7 @@ public:
 
 private:
 	int pickedLabel = 0;//当前修改的label类型
+	int spacialLabel = 200;
 	int csvRecord[64];
 	map<int, int> LColors;
 	string csvRecordPath;

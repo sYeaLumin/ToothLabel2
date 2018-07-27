@@ -1,6 +1,8 @@
 #include "ToothLabelEditor.h"
 
-
+struct POS {
+	int x, y;
+};
 
 ToothLabelEditor::ToothLabelEditor()
 {
@@ -50,6 +52,40 @@ void ToothLabelEditor::setLabels(Mesh & mesh, int pickedID)
 	setAreaLabel(mesh.fList[pickedID], pickedLabel, mesh.fList[pickedID]->FaceLabel());
 }
 
+bool ifNeighboor(Face* f, Face* fnext) {
+	Face *f1, *f2, *f3;
+	f1 = f->HalfEdge()->Twin()->LeftFace();
+	f2 = f->HalfEdge()->Prev()->Twin()->LeftFace();
+	f3 = f->HalfEdge()->Next()->Twin()->LeftFace();
+	if (f1 != fnext && f2 != fnext && f3 != fnext)
+		return false;
+	else return true;
+}
+
+void ToothLabelEditor::paintLabels(Mesh & mesh, vector<int>& pos)
+{
+	int viewport[4];
+	unsigned char data[4];
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	vector<Face *> ring;
+	for (int i = 0; i < pos.size() / 2; i++) {
+		glReadPixels(pos[2 * i], viewport[3] - pos[2 * i + 1], 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		int pickedID = data[0] + data[1] * 256 + data[2] * 65536;
+		if (pickedID == 0x00ffffff)
+			pickedID = -1;
+		if (pickedID >= mesh.fList.size() || pickedID < 0)
+			return;
+		if (ring.size()==0 || mesh.fList[pickedID] != ring[ring.size() - 1]) {
+			ring.push_back(mesh.fList[pickedID]);
+		}
+	}
+
+	for (int i = 0; i < ring.size(); i++) 
+		ring[i]->SetFaceLabel(pickedLabel);
+}
+
 void ToothLabelEditor::setBubbleLabel(Mesh & mesh, int pickedID)
 {
 	if (pickedID >= mesh.fList.size() || pickedID < 0)
@@ -97,6 +133,8 @@ int ToothLabelEditor::getLColor(int ID)
 {
 	if (ID < 100)
 		return LColors[ID];
+	else if (ID == spacialLabel)
+		return 0;
 	else
 		return 1;
 }
@@ -133,4 +171,27 @@ void ToothLabelEditor::setAreaLabel(Face *f, int label1, int label2)
 		setAreaLabel(f2, label1, label2);
 	if (f3->faceLabel == label2)
 		setAreaLabel(f3, label1, label2);
+}
+
+void ToothLabelEditor::setRingLabel(Face * f, int labelRing)
+{
+	if (f->faceLabel == labelRing)
+		return;
+	f->SetFaceLabel(labelRing);
+
+	Face *f1, *f2, *f3;
+	f1 = f->HalfEdge()->Twin()->LeftFace();
+	f2 = f->HalfEdge()->Prev()->Twin()->LeftFace();
+	f3 = f->HalfEdge()->Next()->Twin()->LeftFace();
+	if (f1->faceLabel == labelRing &&
+		f2->faceLabel == labelRing &&
+		f3->faceLabel == labelRing)
+		return;
+
+	if (f1->faceLabel != labelRing)
+		setRingLabel(f1, labelRing);
+	if (f2->faceLabel != labelRing)
+		setRingLabel(f2, labelRing);
+	if (f3->faceLabel != labelRing)
+		setRingLabel(f3, labelRing);
 }

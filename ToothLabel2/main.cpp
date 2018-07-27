@@ -40,7 +40,8 @@ enum EnumDisplayMode
 	BUBBLE_LABEL,
 	RECORD_LABEL,
 	NEXT_MODEL,
-	LOAD_LABEL
+	LOAD_LABEL,
+	PAINT_LABEL
 };
 
 // global variables
@@ -791,6 +792,7 @@ void DisplayFunc2()
 	case SET_LABEL:
 	case SET_LABELS:
 	case BUBBLE_LABEL:
+	case PAINT_LABEL:
 		DrawFlatShaded2(toothMesh2, toothMesh2.maxGroupID);
 		break;
 	default:
@@ -814,6 +816,7 @@ void InitMenu()
 	glutAddMenuEntry("Pick Label", PICK_LABEL);
 	glutAddMenuEntry("Set Label", SET_LABEL);
 	glutAddMenuEntry("Set Labels", SET_LABELS);
+	glutAddMenuEntry("Paint Labels", PAINT_LABEL);
 	glutAddMenuEntry("Bubble Label", BUBBLE_LABEL);
 	glutAddMenuEntry("Lord Label", LOAD_LABEL);
 	glutAddMenuEntry("Record Label", RECORD_LABEL);
@@ -1149,28 +1152,43 @@ void SpecialKeyFcn(GLint specialKey, GLint xMouse, GLint yMouse)
 	glutPostRedisplay();
 }
 
+vector<int> pos;
 void MouseFunc(int button, int state, int x, int y)
 {
 	float nccX, nccY;
 	//if (button == GLUT_RIGHT_BUTTON) exit(0);
 	if (button == GLUT_LEFT_BUTTON)
 	{
-		switch (state)
-		{
-		case GLUT_DOWN:
-			isLeftDown = true;
-			ScreenToNCC(x, y, nccX, nccY);
-			trackball.Push(nccX, nccY);
-			ModifyFunc(x, y);
-			/*
-			if (displayMode == EDIT_LABEL) ModifyFunc(x, y);// Û±Í ∞»°
-			else
-				trackball.Push(nccX, nccY);*/
-			break;
-		case GLUT_UP:
-			ScreenToNCC(x, y, nccX, nccY);
-			isLeftDown = false;
-			break;
+		if (displayMode == PAINT_LABEL) {
+			switch (state)
+			{
+			case GLUT_DOWN:
+				isLeftDown = true;
+				pos.push_back(x);
+				pos.push_back(y);
+				break;
+			case GLUT_UP:
+				isLeftDown = false;
+				DrawMeshWithDifferentColor(toothMesh2);
+				TLE.paintLabels(toothMesh2, pos);
+				pos.clear();
+				break;
+			}
+		}
+		else {
+			switch (state)
+			{
+			case GLUT_DOWN:
+				isLeftDown = true;
+				ScreenToNCC(x, y, nccX, nccY);
+				trackball.Push(nccX, nccY);
+				ModifyFunc(x, y);
+				break;
+			case GLUT_UP:
+				ScreenToNCC(x, y, nccX, nccY);
+				isLeftDown = false;
+				break;
+			}
 		}
 	}
 	if (button == GLUT_MIDDLE_BUTTON)
@@ -1195,10 +1213,16 @@ void MotionFunc(int x, int y)
 {
 	if (isLeftDown)
 	{
-		float nccX, nccY;
-		ScreenToNCC(x, y, nccX, nccY);
-		trackball.Move(nccX, nccY);
-		glutPostRedisplay();
+		if (displayMode == PAINT_LABEL) {
+			pos.push_back(x);
+			pos.push_back(y);
+		}
+		else {
+			float nccX, nccY;
+			ScreenToNCC(x, y, nccX, nccY);
+			trackball.Move(nccX, nccY);
+			glutPostRedisplay();
+		}
 	}
 	else if (isMidDown)
 	{	
