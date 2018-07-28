@@ -119,8 +119,6 @@ int ToothLabelEditor::getLColor(int ID)
 {
 	if (ID < 100)
 		return LColors[ID];
-	else if (ID == spacialLabel)
-		return 0;
 	else
 		return 1;
 }
