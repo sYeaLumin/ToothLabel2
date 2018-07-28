@@ -169,11 +169,19 @@ string meshSepartedRoot = "F:\\Tooth\\SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "F:\\Tooth\\meshNumberList.txt";
 string meshLabelRoot = "F:\\Tooth\\180721Label\\";*/
 
+/*
 string csvPath = "D:\\Lumin\\LAB\\Tooth\\TMP\\labelEditor.csv";
 string mesh2Root = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\";
 string meshSepartedRoot = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "D:\\Lumin\\LAB\\Tooth\\TMP\\meshNumberList.txt";
 string meshLabelRoot = "D:\\Lumin\\LAB\\Tooth\\180721Label\\";
+*/
+string csvPath = "labelEditor.csv";
+string mesh2Root = "OriginalModel\\";
+string meshSepartedRoot = "SeparatedModel\\reshape_ddm\\";
+string meshNumberListTXT = "meshNumberList.txt";
+string meshLabelRoot = "Label\\";
+
 string meshLabelTXT;
 vector<string> meshNumberList;
 vector<string> meshNameList;
@@ -207,67 +215,7 @@ int main(int argc, char *argv[]) {
 	txt.close();
 
 	mesh2 = mesh2Root + meshNumberList[0] + "\\2\\";
-	/*
-	vector<string> meshSepList;
-	ReadFiles(meshSeparated, meshSepList);
-	LoadMesh(toothMesh2, mesh2);
-	SetBoundaryBox(toothMesh2.MinCoord(), toothMesh2.MaxCoord());
-	ANNkd_tree* mesh2Tree = buildANNTreeForMesh(toothMesh2);//ÎªÄ£ÐÍ2½¨ËÑË÷Ê÷
-	for (int toothID = 0; toothID < meshSepList.size(); toothID++) {
-		LoadMesh(toothMeshSeparated, meshSeparated+ meshSepList[toothID]);
 
-		size_t n = meshSepList[toothID].find_last_of(".");
-		string toothNumber = meshSepList[toothID].substr(n-2, n);
-		int toothNum = atoi(toothNumber.c_str());
-		cout << "ToothNum:" << toothNum << endl;
-
-		int  nearNum = 3;
-		int dim = 3;
-		double	eps = 0.1;		// error bound
-		ANNpoint			queryPt;				// query point
-		ANNidxArray			nnIdx;					// near neighbor indices
-		ANNdistArray		dists;					// near neighbor distances
-		queryPt = annAllocPt(dim);					// allocate query point
-		nnIdx = new ANNidx[nearNum];						// allocate near neigh indices
-		dists = new ANNdist[nearNum];						// allocate near neighbor dists
-
-		for (size_t i = 0; i < toothMeshSeparated.fList.size(); i++)
-		{
-			Face * f = toothMeshSeparated.fList[i];
-			if (f->GroupID() != toothMeshSeparated.maxGroupID) continue;
-			for (int j = 0; j < dim; j++)
-				queryPt[j] = f->center[j];
-
-			mesh2Tree->annkSearch(					// search
-				queryPt,						// query point
-				nearNum,								// number of near neighbors
-				nnIdx,							// nearest neighbors (returned)
-				dists,							// distance (returned)
-				eps);							// error bound
-
-			
-			toothMesh2.fList[nnIdx[0]]->faceLabel = toothNum;
-			
-			float tmp = 5.0;
-			if(dists[1]/dists[0] < tmp)
-				toothMesh2.fList[nnIdx[1]]->faceLabel = toothNum;
-			//if (dists[2] / dists[0] < tmp)
-				//toothMesh2.fList[nnIdx[2]]->faceLabel = tootNum;
-		}
-		delete[] nnIdx;
-		delete[] dists;
-	}
-	delete mesh2Tree;//É¾³ýËÑË÷Ê÷
-	for (int i = 0; i < toothMesh2.fList.size(); i++) {
-		Face * f = toothMesh2.fList[i];
-		Face *f1, *f2, *f3;
-		f1 = f->HalfEdge()->Twin()->LeftFace();
-		f2 = f->HalfEdge()->Prev()->Twin()->LeftFace();
-		f3 = f->HalfEdge()->Next()->Twin()->LeftFace();
-		if (f1->faceLabel == f2->faceLabel && f2->faceLabel == f3->faceLabel)
-			f->faceLabel = f1->faceLabel;
-	}*/
-	
 	nextModel();
 
 	glutMainLoop();
