@@ -162,11 +162,18 @@ ANNkd_tree* buildANNTreeForMesh(Mesh& mesh);
 
 //√Ê∆¨Label±‡º≠
 ToothLabelEditor TLE;
+/*
 string csvPath = "F:\\Tooth\\labelEditor.csv";
 string mesh2Root = "F:\\Tooth\\OriginalModel\\";
 string meshSepartedRoot = "F:\\Tooth\\SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "F:\\Tooth\\meshNumberList.txt";
-string meshLabelRoot = "F:\\Tooth\\180721Label\\";
+string meshLabelRoot = "F:\\Tooth\\180721Label\\";*/
+
+string csvPath = "D:\\Lumin\\LAB\\Tooth\\TMP\\labelEditor.csv";
+string mesh2Root = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\";
+string meshSepartedRoot = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\reshape_ddm\\";
+string meshNumberListTXT = "D:\\Lumin\\LAB\\Tooth\\TMP\\meshNumberList.txt";
+string meshLabelRoot = "D:\\Lumin\\LAB\\Tooth\\180721Label\\";
 string meshLabelTXT;
 vector<string> meshNumberList;
 vector<string> meshNameList;
