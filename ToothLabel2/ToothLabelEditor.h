@@ -16,7 +16,6 @@ public:
 	void pickLabel(Mesh & mesh, int pickedID);
 	void setLabel(Mesh & mesh, int pickedID);
 	void setLabels(Mesh & mesh, int pickedID);
-	void paintLabels(Mesh & mesh, vector<int>& pos);
 	void setBubbleLabel(Mesh & mesh, int pickedID);
 	void recordLabel(Mesh & mesh, string labelTXT);
 	int getLColor(int ID);

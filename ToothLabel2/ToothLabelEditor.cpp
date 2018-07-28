@@ -48,30 +48,6 @@ void ToothLabelEditor::setLabels(Mesh & mesh, int pickedID)
 	setAreaLabel(mesh.fList[pickedID], pickedLabel, mesh.fList[pickedID]->FaceLabel());
 }
 
-void ToothLabelEditor::paintLabels(Mesh & mesh, vector<int>& pos)
-{
-	int viewport[4];
-	unsigned char data[4];
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	vector<Face *> ring;
-	for (int i = 0; i < pos.size() / 2; i++) {
-		glReadPixels(pos[2 * i], viewport[3] - pos[2 * i + 1], 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		int pickedID = data[0] + data[1] * 256 + data[2] * 65536;
-		if (pickedID == 0x00ffffff)
-			pickedID = -1;
-		if (pickedID >= mesh.fList.size() || pickedID < 0)
-			return;
-		if (ring.size()==0 || mesh.fList[pickedID] != ring[ring.size() - 1]) {
-			ring.push_back(mesh.fList[pickedID]);
-		}
-	}
-
-	for (int i = 0; i < ring.size(); i++) 
-		ring[i]->SetFaceLabel(pickedLabel);
-}
-
 void ToothLabelEditor::setBubbleLabel(Mesh & mesh, int pickedID)
 {
 	if (pickedID >= mesh.fList.size() || pickedID < 0)

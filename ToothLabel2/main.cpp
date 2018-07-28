@@ -74,12 +74,6 @@ Mesh tooth,tooth2,toothSimplify;
 bool simplifyOnoff = false;
 vector<Vector3d> colorList;
 
-int pcaToothIdx = 1;
-ToothPCAInfoList toothPCAList;
-
-// tmp
-FaceList gumfFlist;
-
 // functions
 void ScreenToNCC(int x, int y, float & nccX, float & nccY);
 void SetBoundaryBox(const Vector3d & bmin, const Vector3d & bmax);
@@ -106,12 +100,6 @@ void MouseFunc(int button, int state, int x, int y);
 void MotionFunc(int x, int y);
 void MouseWheelFunc(int button, int dir, int x, int y);
 
-//标记气泡
-void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut);
-void mapLabelForBubbleNoise(Mesh & mesh, Mesh & meshSiplify);
-void remapLabelForBubbleNoise(Mesh & meshSiplify, Mesh & mesh);
-void BuildLabelFromTXT(Mesh& mesh, string txtPath);
-
 //模型ANN映射参数
 double threshold = 0.1; //0.15
 int thresholdForMap = 7; //3
@@ -119,17 +107,6 @@ int KForMap = 10; //5
 vector<string> modelPathList;
 void CreateDir(string dir);
 void ReadFiles(string rootpath, vector<string>& pathList);
-
-//简化模型参数
-double simplifyRatio = 0.15;
-//MeshSimplify ms;
-SimplifyParameters sp;
-
-//特征提取
-//FeatureExtractor fExtractor;
-
-//面片数记录txt
-string recordForFaceLabel = "F:\\Tooth\\recordFor15SimM2FL.txt";
 
 //不同label面片颜色
 float faceLabelColors[18][3] = {
@@ -154,14 +131,22 @@ float faceLabelColors[18][3] = {
 };
 Mesh toothMesh2, toothMeshSeparated;//有气泡的模型2、分割过的没气泡的模型
 ANNkd_tree* buildANNTreeForMesh(Mesh& mesh);
+void BuildLabelFromTXT(Mesh& mesh, string txtPath);
 
 //面片Label编辑
 ToothLabelEditor TLE;
+
+string csvPath = "D:\\Lumin\\LAB\\Tooth\\TMP\\labelEditor.csv";
+string mesh2Root = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\";
+string meshSepartedRoot = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\reshape_ddm\\";
+string meshNumberListTXT = "D:\\Lumin\\LAB\\Tooth\\TMP\\meshNumberList.txt";
+string meshLabelRoot = "D:\\Lumin\\LAB\\Tooth\\180721Label\\";
+/*
 string csvPath = "labelEditor.csv";
 string mesh2Root = "OriginalModel\\";
 string meshSepartedRoot = "SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "meshNumberList.txt";
-string meshLabelRoot = "Label\\";
+string meshLabelRoot = "Label\\";*/
 
 string meshLabelTXT;
 vector<string> meshNumberList;
@@ -375,210 +360,6 @@ void BuildLabelFromTXT(Mesh& mesh, string txtPath) {
 	txt.close();
 }
 
-void remapLabelForBubbleNoise(Mesh & meshSiplify, Mesh & mesh) {
-	cout << "remapLabelForBubbleNoise..." << endl;
-
-	int	k = 1;				// number of nearest neighbors
-	int dim = 3;			// dimension
-	double	eps = 0.1;		// error bound
-	int maxPts = 1000000;  // maximum number of data points
-	int					nPts = (int)meshSiplify.fList.size();					// actual number of data points
-	ANNpointArray		dataPts;				// data points
-	ANNpoint			queryPt;				// query point
-	ANNidxArray			nnIdx;					// near neighbor indices
-	ANNdistArray		dists;					// near neighbor distances
-	ANNkd_tree*			kdTree;					// search structure
-
-	queryPt = annAllocPt(dim);					// allocate query point
-	dataPts = annAllocPts(maxPts, dim);			// allocate data points
-	nnIdx = new ANNidx[k];						// allocate near neigh indices
-	dists = new ANNdist[k];						// allocate near neighbor dists
-
-												// set up data
-	for (size_t i = 0; i < meshSiplify.fList.size(); i++)
-	{
-		for (int j = 0; j < dim; j++)
-		{
-			dataPts[i][j] = meshSiplify.fList[i]->center[j];
-		}
-	}
-
-	// set up kd-tree
-	kdTree = new ANNkd_tree(		// build search structure
-		dataPts,					// the data points
-		nPts,						// number of points
-		dim);						// dimension of space
-
-									// query
-									//meshWith.FindMaxConnectedComponet();
-									//cout << src.maxGroupID << endl;
-	for (size_t i = 0; i < mesh.fList.size(); i++)
-	{
-		Face * f = mesh.fList[i];
-		if (f->GroupID() != mesh.maxGroupID) continue;
-		for (int j = 0; j < dim; j++)
-		{
-			queryPt[j] = f->center[j];
-		}
-
-		kdTree->annkSearch(					// search
-			queryPt,						// query point
-			k,								// number of near neighbors
-			nnIdx,							// nearest neighbors (returned)
-			dists,							// distance (returned)
-			eps);							// error bound
-
-		if (meshSiplify.fList[nnIdx[0]]->bubbleNoiseLabel == 1)
-			f->bubbleNoiseLabel2 = 1;
-	}
-	cout << endl;
-	delete[] nnIdx;							// clean things up
-	delete[] dists;
-	delete kdTree;
-	annClose();
-}
-
-void mapLabelForBubbleNoise(Mesh & mesh, Mesh & meshSiplify) {
-	cout << "mapLabelForBubbleNoise..." << endl;
-	int dim = 3;			// dimension
-	double	eps = 0.1;		// error bound
-	int maxPts = 1000000;  // maximum number of data points
-	int					nPts = (int)mesh.fList.size();					// actual number of data points
-	ANNpointArray		dataPts;				// data points
-	ANNpoint			queryPt;				// query point
-	ANNidxArray			nnIdx;					// near neighbor indices
-	ANNdistArray		dists;					// near neighbor distances
-	ANNkd_tree*			kdTree;					// search structure
-
-	queryPt = annAllocPt(dim);					// allocate query point
-	dataPts = annAllocPts(maxPts, dim);			// allocate data points
-	nnIdx = new ANNidx[KForMap];						// allocate near neigh indices
-	dists = new ANNdist[KForMap];						// allocate near neighbor dists
-
-												// set up data
-	for (size_t i = 0; i < mesh.fList.size(); i++)
-	{
-		for (int j = 0; j < dim; j++)
-		{
-			dataPts[i][j] = mesh.fList[i]->center[j];
-		}
-	}
-
-	// set up kd-tree
-	kdTree = new ANNkd_tree(		// build search structure
-		dataPts,					// the data points
-		nPts,						// number of points
-		dim);						// dimension of space
-
-									// query
-									//meshWith.FindMaxConnectedComponet();
-									//cout << src.maxGroupID << endl;
-	for (size_t i = 0; i < meshSiplify.fList.size(); i++)
-	{
-		Face * f = meshSiplify.fList[i];
-		if (f->GroupID() != meshSiplify.maxGroupID) continue;
-		for (int j = 0; j < dim; j++)
-		{
-			queryPt[j] = f->center[j];
-		}
-
-		kdTree->annkSearch(					// search
-			queryPt,						// query point
-			KForMap,								// number of near neighbors
-			nnIdx,							// nearest neighbors (returned)
-			dists,							// distance (returned)
-			eps);							// error bound
-
-		double tmp = 0;
-		for (int t = 0; t < KForMap; t++)
-			tmp += mesh.fList[nnIdx[t]]->bubbleNoiseLabel;
-		if (tmp > thresholdForMap) {
-			meshSiplify.fList[i]->bubbleNoiseLabel = 1;
-			//cout << "MapLabel:" << i << ":" << tmp  << endl;
-		}
-	}
-	cout << endl;
-	delete[] nnIdx;							// clean things up
-	delete[] dists;
-	delete kdTree;
-	annClose();
-}
-
-//标记气泡
-void BuildLabelForBubbleNoise(Mesh & meshWith, Mesh & meshWithOut) {
-	cout << "BuildLabelForBubbleNoise..." << endl;
-
-	int	k = 1;				// number of nearest neighbors
-	int dim = 3;			// dimension
-	double	eps = 0.1;		// error bound
-	int maxPts = 1000000;  // maximum number of data points
-	int					nPts = (int)meshWithOut.fList.size();					// actual number of data points
-	ANNpointArray		dataPts;				// data points
-	ANNpoint			queryPt;				// query point
-	ANNidxArray			nnIdx;					// near neighbor indices
-	ANNdistArray		dists;					// near neighbor distances
-	ANNkd_tree*			kdTree;					// search structure
-
-	queryPt = annAllocPt(dim);					// allocate query point
-	dataPts = annAllocPts(maxPts, dim);			// allocate data points
-	nnIdx = new ANNidx[k];						// allocate near neigh indices
-	dists = new ANNdist[k];						// allocate near neighbor dists
-
-	// set up data
-	for (size_t i = 0; i < meshWithOut.fList.size(); i++)
-	{
-		for (int j = 0; j < dim; j++)
-		{
-			dataPts[i][j] = meshWithOut.fList[i]->center[j];
-		}
-	}
-
-	// set up kd-tree
-	kdTree = new ANNkd_tree(		// build search structure
-		dataPts,					// the data points
-		nPts,						// number of points
-		dim);						// dimension of space
-
-	// query
-	//meshWith.FindMaxConnectedComponet();
-	//cout << src.maxGroupID << endl;
-	for (size_t i = 0; i < meshWith.fList.size(); i++)
-	{
-		Face * f = meshWith.fList[i];
-		if (f->GroupID() != meshWith.maxGroupID) continue;
-		for (int j = 0; j < dim; j++)
-		{
-			queryPt[j] = f->center[j];
-		}
-
-		kdTree->annkSearch(					// search
-			queryPt,						// query point
-			k,								// number of near neighbors
-			nnIdx,							// nearest neighbors (returned)
-			dists,							// distance (returned)
-			eps);							// error bound
-
-		f->simplifyMapping = nnIdx[0];
-		//double threshold = 0.1; //0.4  0.15
-		double distance = f->center.Distance(meshWithOut.fList[nnIdx[0]]->center);
-		//cout << distance << " ";
-		if (distance > threshold) {
-			meshWith.fList[i]->bubbleNoiseLabel = 1;
-			Face *f = meshWith.fList[i];
-			f->HalfEdge()->Start()->simplify_level = 1;
-			f->HalfEdge()->End()->simplify_level = 1;
-			f->HalfEdge()->Next()->End()->simplify_level = 1;
-			//cout << "BuildLabel:" << i << ":" << distance << " " << nnIdx[0] << endl;
-		}	
-		//meshWithOut.fList[nnIdx[0]]->center
-	}
-	cout << endl;
-	delete[] nnIdx;							// clean things up
-	delete[] dists;
-	delete kdTree;
-	annClose();
-}
-
 //读取下级目录到vector
 void ReadFiles(string rootpath, vector<string>& pathList)
 {
@@ -740,9 +521,6 @@ void DisplayFunc2()
 // init right-click menu
 void InitMenu()
 {
-	//displayMenu = glutCreateMenu(MenuCallback);
-	//glutAddMenuEntry("Flat Shaded", FLATSHADED);
-
 	mainMenu = glutCreateMenu(MenuCallback);
 	glutAddMenuEntry("Display", FLATSHADED);
 	glutAddMenuEntry("Pick Label", PICK_LABEL);
@@ -782,29 +560,6 @@ void LoadMesh(Mesh & mesh, string & modelName)
 	mesh.FindMaxConnectedComponet();
 
 	xtrans = ytrans = 0.0;
-}
-
-void CreateColorList()
-{
-	int x = 0, y = 0, z = 0;
-
-	colorList.push_back(Vector3d(0.5, 0.5, 0.5));
-	
-
-	for (int i = 0; i < 50; i++)
-	{
-		x = rand() % 256;
-		y = rand() % 256;
-		z = rand() % 256;
-		colorList.push_back(Vector3d(x / 256.0, y / 256.0, z / 256.0));
-	}
-
-	colorList[13] = Vector3d(0.1, 0.8, 0.3);
-
-	colorList[20] = Vector3d(0.9, 0.9, 0.9);
-	colorList[21] = Vector3d(1.0, 0.0, 0.0);
-	colorList[22] = Vector3d(0.0, 1.0, 0.0);
-	colorList[23] = Vector3d(0.0, 0.0, 1.0);
 }
 
 // GLUT menu callback function
@@ -1015,72 +770,10 @@ void ModifyFunc(int x, int y) {
 // GLUT keyboard callback function
 void KeyboardFunc(unsigned char ch, int x, int y)
 {
-	int tmp;
-	switch (ch)
-	{
-	case 'o':case 'O':
-		LoadNewModel();
-		break;
-	case 'a':case 'A':
-		SaveErrorSimplfiedModel();
-		break;
-	case 'p':case 'P':
-		cin >> tmp;
-		if (tmp < 11) break;
-		if (tmp > 18 && tmp < 21) break;
-		if (tmp>28 && tmp < 31) break;
-		if (tmp>38 && tmp < 41) break;
-		if (tmp > 48) break;
-
-		if (tmp >= 11 && tmp <= 18)
-			pcaToothIdx = tmp - 10;
-		else if (tmp >= 21 && tmp <= 28)
-			pcaToothIdx = tmp - 12;
-		else if (tmp >= 31 && tmp <= 38)
-			pcaToothIdx = tmp - 30;
-		else if (tmp >= 41 && tmp <= 48)
-			pcaToothIdx = tmp - 32;
-		break;
-	case 27:
-		exit(0);
-		break;
-	default:
-		break;
-	}
-
-	glutPostRedisplay();
 }
 
 void SpecialKeyFcn(GLint specialKey, GLint xMouse, GLint yMouse)
 {
-	int oldFileIdx = currentFileIdx;
-	switch (specialKey)
-	{
-	case GLUT_KEY_LEFT:
-		currentFileIdx--;
-		currentFileIdx = currentFileIdx < 0 ? 0 : currentFileIdx;
-		break;
-	case GLUT_KEY_RIGHT:
-		currentFileIdx++;
-		currentFileIdx = currentFileIdx < modelPathList.size() ? currentFileIdx : modelPathList.size() - 1;
-		break;
-	case GLUT_KEY_UP:
-		pcaToothIdx++;
-		pcaToothIdx = min(pcaToothIdx, 16);
-		break;
-	case GLUT_KEY_DOWN:
-		pcaToothIdx--;
-		pcaToothIdx = max(pcaToothIdx, 1);
-		break;
-	}
-	if (oldFileIdx != currentFileIdx)
-	{
-		filePath = modelPathList[currentFileIdx];
-		LoadMesh(tooth, modelPathList[currentFileIdx] + modelName);
-		SetBoundaryBox(tooth.MinCoord(), tooth.MaxCoord());
-		xtrans = ytrans = 0.0;
-	}
-	glutPostRedisplay();
 }
 
 vector<int> pos;
