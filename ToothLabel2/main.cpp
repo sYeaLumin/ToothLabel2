@@ -116,11 +116,6 @@ void BuildLabelFromTXT(Mesh& mesh, string txtPath);
 double threshold = 0.1; //0.15
 int thresholdForMap = 7; //3
 int KForMap = 10; //5
-
-string rootPath = "F:\\Tooth\\";
-string oriModelPath = "180515-15OriModel\\";//"OriginalModel\\";//
-string simModelPath = "180515-15SimM2ModelNSFB\\";// "15SimM2Model\\";//
-string featurePath = "180515-15SimM2FeatureNSFB\\";//  "15SimM2Feature\\";//
 vector<string> modelPathList;
 void CreateDir(string dir);
 void ReadFiles(string rootpath, vector<string>& pathList);
@@ -162,20 +157,6 @@ ANNkd_tree* buildANNTreeForMesh(Mesh& mesh);
 
 //√Ê∆¨Label±‡º≠
 ToothLabelEditor TLE;
-/*
-string csvPath = "F:\\Tooth\\labelEditor.csv";
-string mesh2Root = "F:\\Tooth\\OriginalModel\\";
-string meshSepartedRoot = "F:\\Tooth\\SeparatedModel\\reshape_ddm\\";
-string meshNumberListTXT = "F:\\Tooth\\meshNumberList.txt";
-string meshLabelRoot = "F:\\Tooth\\180721Label\\";*/
-
-/*
-string csvPath = "D:\\Lumin\\LAB\\Tooth\\TMP\\labelEditor.csv";
-string mesh2Root = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\";
-string meshSepartedRoot = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\reshape_ddm\\";
-string meshNumberListTXT = "D:\\Lumin\\LAB\\Tooth\\TMP\\meshNumberList.txt";
-string meshLabelRoot = "D:\\Lumin\\LAB\\Tooth\\180721Label\\";
-*/
 string csvPath = "labelEditor.csv";
 string mesh2Root = "OriginalModel\\";
 string meshSepartedRoot = "SeparatedModel\\reshape_ddm\\";
@@ -188,10 +169,8 @@ vector<string> meshNameList;
 int meshNumber = -1;
 void nextModel();
 
-//string mesh2 = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\1635634\\2\\¿Ó—©”Ò_2018-03-08_C01001635634_U.stl";
-//string meshSeparated = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\1635634\\U\\";
-string mesh2 = "F:\\Tooth\\OriginalModel\\1635634\\2\\¿Ó—©”Ò_2018-03-08_C01001635634_U.stl";
-string meshSeparated = "F:\\Tooth\\SeparatedModel\\1635634\\U\\";
+string mesh2;
+string meshSeparated;
 
 int main(int argc, char *argv[]) {
 	glutInit(&argc, argv);
@@ -765,13 +744,10 @@ void InitMenu()
 	//glutAddMenuEntry("Flat Shaded", FLATSHADED);
 
 	mainMenu = glutCreateMenu(MenuCallback);
-	//glutAddSubMenu("Display", FLATSHADED);
 	glutAddMenuEntry("Display", FLATSHADED);
-	//glutAddMenuEntry("Load New Model", 100);
 	glutAddMenuEntry("Pick Label", PICK_LABEL);
 	glutAddMenuEntry("Set Label", SET_LABEL);
 	glutAddMenuEntry("Set Labels", SET_LABELS);
-	glutAddMenuEntry("Paint Labels", PAINT_LABEL);
 	glutAddMenuEntry("Bubble Label", BUBBLE_LABEL);
 	glutAddMenuEntry("Lord Label", LOAD_LABEL);
 	glutAddMenuEntry("Record Label", RECORD_LABEL);
