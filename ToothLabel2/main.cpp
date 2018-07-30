@@ -135,18 +135,18 @@ void BuildLabelFromTXT(Mesh& mesh, string txtPath);
 
 //√Ê∆¨Label±‡º≠
 ToothLabelEditor TLE;
-
+/*
 string csvPath = "D:\\Lumin\\LAB\\Tooth\\TMP\\labelEditor.csv";
 string mesh2Root = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\";
 string meshSepartedRoot = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "D:\\Lumin\\LAB\\Tooth\\TMP\\meshNumberList.txt";
-string meshLabelRoot = "D:\\Lumin\\LAB\\Tooth\\180721Label\\";
-/*
+string meshLabelRoot = "D:\\Lumin\\LAB\\Tooth\\180721Label\\";*/
+
 string csvPath = "labelEditor.csv";
 string mesh2Root = "OriginalModel\\";
 string meshSepartedRoot = "SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "meshNumberList.txt";
-string meshLabelRoot = "Label\\";*/
+string meshLabelRoot = "Label\\";
 
 string meshLabelTXT;
 vector<string> meshNumberList;
@@ -783,36 +783,18 @@ void MouseFunc(int button, int state, int x, int y)
 	//if (button == GLUT_RIGHT_BUTTON) exit(0);
 	if (button == GLUT_LEFT_BUTTON)
 	{
-		if (displayMode == PAINT_LABEL) {
-			switch (state)
-			{
-			case GLUT_DOWN:
-				isLeftDown = true;
-				pos.push_back(x);
-				pos.push_back(y);
-				break;
-			case GLUT_UP:
-				isLeftDown = false;
-				DrawMeshWithDifferentColor(toothMesh2);
-				TLE.paintLabels(toothMesh2, pos);
-				pos.clear();
-				break;
-			}
-		}
-		else {
-			switch (state)
-			{
-			case GLUT_DOWN:
-				isLeftDown = true;
-				ScreenToNCC(x, y, nccX, nccY);
-				trackball.Push(nccX, nccY);
-				ModifyFunc(x, y);
-				break;
-			case GLUT_UP:
-				ScreenToNCC(x, y, nccX, nccY);
-				isLeftDown = false;
-				break;
-			}
+		switch (state)
+		{
+		case GLUT_DOWN:
+			isLeftDown = true;
+			ScreenToNCC(x, y, nccX, nccY);
+			trackball.Push(nccX, nccY);
+			ModifyFunc(x, y);
+			break;
+		case GLUT_UP:
+			ScreenToNCC(x, y, nccX, nccY);
+			isLeftDown = false;
+			break;
 		}
 	}
 	if (button == GLUT_MIDDLE_BUTTON)
