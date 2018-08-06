@@ -170,7 +170,7 @@ namespace BiMesh
 		int TmpIndex() const { return tmpIndex; }
 		int LabelBoundary() const { return labelBoundary; }
 		int Flag() const { return flag; }
-		bool IfCutToSave() const { return IfCutToSave; }
+		bool IfCutToSave() const { return ifCutToSave; }
 		const Vector3d & SetPosition(const Vector3d & p) { return position = p; }
 		const Vector3d & SetNormal(const Vector3d & n) { return normal = n; }
 		const Vector3d & SetColor(const Vector3d & c) { return color = c; }
@@ -242,6 +242,8 @@ namespace BiMesh
 		vector<float> assist_weight;
 		vector<int> dCost;
 		float tmpGeodesicDistance = 1000;
+
+		int simplifyMapping;
 
 		Face() : he(NULL) { }
 

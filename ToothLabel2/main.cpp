@@ -103,6 +103,7 @@ int ModelNumber = 1591804;
 string ModelRoot = "F:\\Tooth\\OriginalModel\\";
 string LabelRoot = "F:\\Tooth\\STAGE2-180721\\Label\\";
 string FeatureRoot = "F:\\Tooth\\STAGE2-180721\\Feature\\";
+string SingleToothRoot = "F:\\Tooth\\STAGE2-180721\\SingleTooth\\";
 bool searchFilesByWildcard(string Path, vector<string> & files);
 void BuildLabelFromTXT(Mesh& mesh, string txtPath);
 
@@ -125,11 +126,16 @@ int main(int argc, char *argv[]) {
 	string featureTxt = FeatureRoot + sss.str() + "\\" + ss.str() + LorU;
 
 	if (modelFiles.size() == 1) {
+		Mesh tooth;
+		LoadMesh(tooth, ModelRoot + ModelName + "\\2\\" +modelFiles[0]);
+		BuildLabelFromTXT(tooth, LabelRoot + ss.str() + LorU + ".txt");
 		//把要算的单个牙齿切出来
+		//CreateDir();
+		tooth.SaveOBJWithLabel(ToothNumber, SingleToothRoot+sss.str() + "\\" + ss.str() + LorU + ".obj");
 
+		FeatureExtractor fExtractor;
+		fExtractor.extractFeature(SingleToothRoot + sss.str() + "\\" + ss.str() + LorU + ".obj");
 
-		//FeatureExtractor fExtractor;
-		//fExtractor.extractFeature(modelFiles[0]);
 		//fExtractor.saveFeature(featureTxt, labelForTooth);
 	}
 
@@ -181,7 +187,7 @@ void BuildLabelFromTXT(Mesh& mesh, string txtPath) {
 		istringstream is(s);
 		string faceNum, label;
 		is >> faceNum >> label;
-		mesh.fList[atoi(faceNum.c_str())]->Label = atoi(label.c_str());
+		mesh.fList[atoi(faceNum.c_str())]->SetLabel(atoi(label.c_str()));
 		i += 1;
 		if (i % 1000 == 0)
 			cout << ".";
