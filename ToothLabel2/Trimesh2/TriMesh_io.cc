@@ -30,6 +30,18 @@ extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 
 #define BIGNUM 1.0e10
 
+class STLVertex
+{
+public:
+	float x, y, z;
+	int stlID, objID;
+	STLVertex() {}
+	STLVertex(float & x, float & y, float & z, int & stlID) :x(x), y(y), z(z), stlID(stlID) {}
+	~STLVertex() {}
+
+private:
+
+};
 
 // Forward declarations
 static bool read_ply(FILE *f, TriMesh *mesh);
@@ -39,6 +51,8 @@ static bool read_ray(FILE *f, TriMesh *mesh);
 static bool read_obj(FILE *f, TriMesh *mesh);
 static bool read_off(FILE *f, TriMesh *mesh);
 static bool read_sm( FILE *f, TriMesh *mesh);
+static bool read_ascii_stl(FILE *f, TriMesh *mesh);	// new defined by xiaojie xu 20180426
+static bool read_binary_stl(FILE *f, TriMesh *mesh);
 
 static bool read_verts_bin(FILE *f, TriMesh *mesh, bool &need_swap,
 	int nverts, int vert_len, int vert_pos, int vert_norm,
@@ -168,7 +182,7 @@ TriMesh *TriMesh::read(const char *filename)
 // few bytes.  Filename can be "-" for stdin
 bool TriMesh::read_helper(const char *filename, TriMesh *mesh)
 {
-	strcpy_s( mesh->filename, filename );
+	strcpy_s(mesh->filename, filename);
 	if (!filename || *filename == '\0')
 		return false;
 
@@ -176,15 +190,19 @@ bool TriMesh::read_helper(const char *filename, TriMesh *mesh)
 	bool ok = false;
 	int c;
 
+	TriMesh * basic = new TriMesh();
+	std::string ss(filename);
+	std::string ext = ss.substr(ss.length() - 3, 3);
+
+
 	if (strcmp(filename, "-") == 0) {
 		f = stdin;
 		filename = "standard input";
-	} else {
-
-		fopen_s(&f,filename, "rb");
+	}
+	else {
+		fopen_s(&f, filename, "rb");
 		if (!f) {
 			perror("fopen");
-			fprintf(stderr, "Can not open\n");
 			goto out;
 		}
 	}
@@ -196,7 +214,16 @@ bool TriMesh::read_helper(const char *filename, TriMesh *mesh)
 		goto out;
 	}
 
-	if (c == 'p') {
+	if (strcmp(ext.c_str(), "stl") == 0)
+	{
+		ungetc(c, f);
+		if (c == 's')
+			ok = read_ascii_stl(f, basic);
+		else
+			ok = read_binary_stl(f, basic);
+
+	}
+	else if (c == 'p') {
 		// See if it's a ply file
 		char buf[4];
 		if (!fgets(buf, 4, f)) {
@@ -204,39 +231,45 @@ bool TriMesh::read_helper(const char *filename, TriMesh *mesh)
 			goto out;
 		}
 		if (strncmp(buf, "ly", 2) == 0)
-			ok = read_ply(f, mesh);
-	} else if (c == 0x4d) {
+			ok = read_ply(f, basic);
+	}
+	else if (c == 0x4d) {
 		int c2 = fgetc(f);
 		ungetc(c2, f);
 		ungetc(c, f);
 		if (c2 == 0x4d)
-			ok = read_3ds(f, mesh);
-	} else if (c == 'V') {
+			ok = read_3ds(f, basic);
+	}
+	else if (c == 'V') {
 		char buf[5];
 		if (!fgets(buf, 5, f)) {
 			fprintf(stderr, "Can't read header\n");
 			goto out;
 		}
 		if (strncmp(buf, "IVID", 4) == 0)
-			ok = read_vvd(f, mesh);
-	} else if (c == '#') {
+			ok = read_vvd(f, basic);
+	}
+	else if (c == '#') {
 		char buf[1024];
 		fscanf_s(f, "%1024s", buf);
 		if (LINE_IS("material") || LINE_IS("vertex") ||
-		    LINE_IS("shape_")) {
+			LINE_IS("shape_")) {
 			// Assume a ray file
 			pushback(buf, f);
 			ungetc(c, f);
-			ok = read_ray(f, mesh);
-		} else {
-			// Assume an obj file
-			ok = read_obj(f, mesh);
+			ok = read_ray(f, basic);
 		}
-	} else if (c == 'v' || c == 'u' || c == 'f' || c == 'g' || c == 's' || c == 'o') {
+		else {
+			// Assume an obj file
+			ok = read_obj(f, basic);
+		}
+	}
+	else if (c == 'v' || c == 'u' || c == 'f' || c == 'g' || c == 's' || c == 'o') {
 		// Assume an obj file
 		ungetc(c, f);
-		ok = read_obj(f, mesh);
-	} else if (c == 'O') {
+		ok = read_obj(f, basic);
+	}
+	else if (c == 'O') {
 		// Assume an OFF file
 		char buf[3];
 		if (!fgets(buf, 3, f)) {
@@ -244,24 +277,34 @@ bool TriMesh::read_helper(const char *filename, TriMesh *mesh)
 			goto out;
 		}
 		if (strncmp(buf, "FF", 2) == 0)
-			ok = read_off(f, mesh);
-	} else if (isdigit(c)) {
+			ok = read_off(f, basic);
+	}
+	else if (isdigit(c)) {
 		// Assume an old-style sm file
 		ungetc(c, f);
-		ok = read_sm(f, mesh);
-	} else {
+		ok = read_sm(f, basic);
+	}
+	else {
 		fprintf(stderr, "Unknown file type\n");
 	}
 
 out:
 	if (f)
 		fclose(f);
-	if (!ok || (mesh->vertices.empty() && mesh->faces.empty())) {
+
+	if (!ok || (basic->vertices.empty() && basic->faces.empty())) {
 		fprintf(stderr, "\nError reading file [%s]\n", filename);
 		return false;
 	}
 
 	dprintf("Done.\n");
+	check_ind_range(basic);
+
+	if (ok)
+	{
+		basic->find_max_component(mesh);
+		delete basic;
+	}
 	check_ind_range(mesh);
 	return true;
 }
@@ -702,6 +745,144 @@ static bool read_obj(FILE *f, TriMesh *mesh)
 			tess(mesh->vertices, thisface, mesh->faces);
 		}
 	}
+	return true;
+}
+
+
+// Read an stl file
+static bool STLVertexCmpXYZ(STLVertex & a, STLVertex & b)
+{
+	if (a.x < b.x) return true;
+	else if (a.x > b.x) return false;
+	else if (a.y < b.y) return true;
+	else if (a.y > b.y) return false;
+	else if (a.z < b.z) return true;
+	else if (a.z > b.z) return false;
+	else return a.stlID < b.stlID;
+}
+
+static bool STLVertexCmpSTLID(STLVertex & a, STLVertex & b)
+{
+	return a.stlID < b.stlID;
+}
+
+
+static void STL2OBJ(vector<STLVertex> & xyzList, TriMesh *mesh)
+{
+	vector<int> thisface;
+	if (xyzList.size() == 0) return;
+
+	sort(xyzList.begin(), xyzList.end(), STLVertexCmpXYZ);
+
+	xyzList[0].objID = 0;
+	mesh->vertices.push_back(point(xyzList[0].x, xyzList[0].y, xyzList[0].x));
+	int objID = 0;
+	for (size_t i = 1; i < xyzList.size(); i++)
+	{
+		if (xyzList[i].x == xyzList[i - 1].x && xyzList[i].y == xyzList[i - 1].y && xyzList[i].z == xyzList[i - 1].z)
+			xyzList[i].objID = objID;
+		else
+		{
+			xyzList[i].objID = ++objID;
+			mesh->vertices.push_back(point(xyzList[i].x, xyzList[i].y, xyzList[i].x));
+		}
+	}
+
+	sort(xyzList.begin(), xyzList.end(), STLVertexCmpSTLID);
+
+	int zeroCount = 0;
+	for (size_t i = 0, j = 0; i < xyzList.size(); i += 3, j++)
+	{
+		if (xyzList[i].objID == xyzList[i + 1].objID || xyzList[i].objID == xyzList[i + 2].objID || xyzList[i + 1].objID == xyzList[i + 2].objID)
+			zeroCount++;
+		else
+		{
+			thisface.clear();
+			thisface.push_back(xyzList[i].objID);
+			thisface.push_back(xyzList[i + 1].objID);
+			thisface.push_back(xyzList[i + 2].objID);
+			tess(mesh->vertices, thisface, mesh->faces);
+		}
+	}
+
+	std::cout << "removed zero area face count:  " << zeroCount << std::endl;
+}
+
+
+static bool read_ascii_stl(FILE *f, TriMesh *mesh)
+{
+	vector<STLVertex> xyzList;
+
+	int i = 0, j = 0, cnt = 0, pCnt = 4;
+	char buf[1024];
+	char str[100];
+	int p;
+	float x = 0, y = 0, z = 0;
+
+	int count = 0;
+	GET_LINE();
+	do
+	{
+		GET_LINE();
+
+		if (strlen(buf) < 5)
+			break;
+		else
+		{
+			if (strstr(buf, "facet") == NULL)
+				break;
+		}
+
+		GET_LINE();
+
+		for (int i = 0; i < 3; i++)
+		{
+			GET_LINE();
+			p = strstr(buf, "vertex") - buf;
+			sscanf_s(buf + p + 6, "%f %f %f", &x, &y, &z);
+			xyzList.push_back(STLVertex(x, y, z, count));
+			count++;
+		}
+		GET_LINE();
+		GET_LINE();
+	} while (1);
+
+	STL2OBJ(xyzList, mesh);
+	return true;
+}
+
+static bool read_binary_stl(FILE *f, TriMesh *mesh)
+{
+	vector<STLVertex> xyzList;
+
+	char str[80];
+
+	fread(str, sizeof(char), 80, f);
+
+	//number of triangles  
+	int unTriangles;
+	fread((char*)&unTriangles, sizeof(int), 1, f);
+
+	if (unTriangles == 0)
+		return false;
+
+	int count = 0;
+	for (int i = 0; i < unTriangles; i++)
+	{
+		float coorXYZ[12];
+		fread((char*)coorXYZ, sizeof(float), 12, f);
+
+		for (int j = 1; j < 4; j++)
+		{
+			xyzList.push_back(STLVertex(coorXYZ[j * 3], coorXYZ[j * 3 + 1], coorXYZ[j * 3 + 2], count));
+			count++;
+		}
+
+		fread((char*)coorXYZ, sizeof(char), 2, f);
+	}
+
+
+	STL2OBJ(xyzList, mesh);
 	return true;
 }
 

@@ -194,6 +194,8 @@ public:
 	void need_adjacentfaces();
 	void need_across_edge();
 
+	void find_max_component(TriMesh * component);
+
 	// Input and output
 	static TriMesh *read(const char *filename);
 	void write(const char *filename);
