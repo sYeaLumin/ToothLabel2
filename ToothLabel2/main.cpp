@@ -124,8 +124,11 @@ int main(int argc, char *argv[]) {
 	string featureTxt = FeatureRoot + sss.str() + "\\" + ss.str() + LorU;
 
 	if (modelFiles.size() == 1) {
-		FeatureExtractor fExtractor;
-		fExtractor.extractFeature(modelFiles[0]);
+		//把要算的单个牙齿切出来
+
+
+		//FeatureExtractor fExtractor;
+		//fExtractor.extractFeature(modelFiles[0]);
 		//fExtractor.saveFeature(featureTxt, labelForTooth);
 	}
 
