@@ -642,6 +642,70 @@ void Mesh::GetF_labels(vector<int> & labels)
 	}
 }
 
+bool Mesh::SaveOBJWithLabel(int label, string fileName)
+{
+	cout << "Saving " << fileName << endl;
+	vector<Vector3d> mvList;
+	vector<Vector3i> mfList;
+	// find vertice
+	for (size_t i = 0; i < fList.size(); i++)
+	{
+		if (fList[i]->Label() == label || fList[i]->Label() == (label + 100))
+		{
+			for (size_t j = 0; j < 3; j++)
+			{
+				vList[fList[i]->v[j]]->SetIfCutToSave(true);
+			}
+		}
+	}
+
+	// assign tmpIndx and export vertice
+	int count = 0;
+	for (size_t i = 0; i < vList.size(); i++)
+	{
+		if (vList[i]->IfCutToSave())
+		{
+			vList[i]->SetTmpIndex(count++);
+			mvList.push_back(vList[i]->Position());
+		}
+	}
+
+	// export faces and labels
+	int v[3];
+	for (size_t i = 0; i < fList.size(); i++)
+	{
+		if (fList[i]->Label() == label || fList[i]->Label() == (label + 100))
+		{
+			for (size_t j = 0; j < 3; j++)
+			{
+				v[j] = vList[fList[i]->v[j]]->TmpIndex();
+			}
+			mfList.push_back(Vector3i(v[0], v[1], v[2]));
+		}
+	}
+
+	ofstream fout(fileName.c_str());
+	if (fout.is_open())
+	{
+		fout << "# vetices " << mvList.size() << endl;
+		fout << "# faces " << mfList.size() << endl;
+		fout << "#################################" << endl;
+		for (size_t i = 0; i < mvList.size(); i++)
+		{
+			Vector3d p = mvList[i];
+			fout << "v " << p[0] << " " << p[1] << " " << p[2] << endl;
+		}
+
+		for (size_t i = 0; i < mfList.size(); i++)
+		{
+			fout << "f " << mfList[i][0] + 1 << " " << mfList[i][1] + 1 << " " << mfList[i][2] + 1 << endl;
+		}
+		fout.close();
+		return true;
+	}
+	return false;
+}
+
 
 void Mesh::CalculateSphericalCoords()
 {

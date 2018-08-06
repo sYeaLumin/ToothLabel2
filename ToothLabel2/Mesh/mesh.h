@@ -131,6 +131,7 @@ namespace BiMesh
 		HEdge *he;
 		int index;
 		int flag;
+		bool ifCutToSave;
 
 	public:
 		int tmpIndex;
@@ -157,7 +158,7 @@ namespace BiMesh
 		VertexList adjacentvList;
 		vector<double> adjacentDist;
 
-		Vertex() : he(NULL), flag(0), labelBoundary(0){ }
+		Vertex() : he(NULL), flag(0), ifCutToSave(false), labelBoundary(0){ }
 		Vertex(const Vector3d & v) : he(NULL), position(v), flag(0), labelBoundary(0) { }
 		Vertex(double x, double y, double z) : he(NULL), position(x, y, z), flag(0), labelBoundary(0) { }
 
@@ -169,6 +170,7 @@ namespace BiMesh
 		int TmpIndex() const { return tmpIndex; }
 		int LabelBoundary() const { return labelBoundary; }
 		int Flag() const { return flag; }
+		bool IfCutToSave() const { return IfCutToSave; }
 		const Vector3d & SetPosition(const Vector3d & p) { return position = p; }
 		const Vector3d & SetNormal(const Vector3d & n) { return normal = n; }
 		const Vector3d & SetColor(const Vector3d & c) { return color = c; }
@@ -178,6 +180,7 @@ namespace BiMesh
 		int SetTmpIndex(int index) { return Vertex::tmpIndex = index; }
 		int SetLabelBoundary(int value) { return Vertex::labelBoundary = value; }
 		int SetFlag(int value) { return flag = value; }
+		int SetIfCutToSave(bool b) { return ifCutToSave = b; }
 		bool IsBoundary() const
 		{
 			OneRingHEdge ring(this);
@@ -239,12 +242,6 @@ namespace BiMesh
 		vector<float> assist_weight;
 		vector<int> dCost;
 		float tmpGeodesicDistance = 1000;
-
-		int simplfiyLabel = 0;
-		int simplifyMapping = 0;
-		int bubbleNoiseLabel = 0;//ÆøÅÝ±êÇ©
-		int bubbleNoiseLabel2 = 0;
-		int bubbleNoiseLabelResult = 0;
 
 		Face() : he(NULL) { }
 
@@ -407,6 +404,8 @@ namespace BiMesh
 		void GetR_labels(vector<int> & labels);
 		void GetF_labels(vector<int> & labels);
 
+		//Save Single Tooth using Label (update on 20180806)
+		void SaveOBJWithLabel(int label, string path);
 
 		//bool SaveObjFile(const char * filename);
 		void DisplayMeshInfo();

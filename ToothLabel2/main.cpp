@@ -426,6 +426,7 @@ void DrawFlatShaded(Mesh & mesh, int groupID)
 			const Vector3d & pos3 = f->HalfEdge()->Next()->End()->Position();
 			Vector3d normal = (pos2 - pos1).Cross(pos3 - pos1);
 			normal /= normal.L2Norm();
+			/*
 			if (f->bubbleNoiseLabel == 1 && f->bubbleNoiseLabel2 == 1 && f->bubbleNoiseLabelResult == 0)
 				glColor3d(1.0f, 1.0f, 0.1f);
 			else if(f->bubbleNoiseLabel == 1  && f->bubbleNoiseLabel2 == 0 && f->bubbleNoiseLabelResult == 0)
@@ -437,7 +438,7 @@ void DrawFlatShaded(Mesh & mesh, int groupID)
 			else if (f->bubbleNoiseLabel == 1 && f->bubbleNoiseLabel2 == 0 && f->bubbleNoiseLabelResult == 1)
 				glColor3d(1.0f, 0.1f, 1.0f);
 			else 
-				glColor3d(0.4f, 0.4f, 0.4f);
+				glColor3d(0.4f, 0.4f, 0.4f);*/
 			glNormal3dv(normal.ToArray());
 			glVertex3dv(pos1.ToArray());
 			glVertex3dv(pos2.ToArray());
