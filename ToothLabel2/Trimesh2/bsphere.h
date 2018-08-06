@@ -229,7 +229,7 @@ void Miniball<D,T>::pivot_mb(It i)
 
 
 template <int D, class T>
-void Miniball<D,T>::build(bool pivoting = true)
+void Miniball<D,T>::build(bool pivoting /* = true */)
 {
 	B.reset();
 	support_end = L.begin();

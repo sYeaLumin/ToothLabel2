@@ -114,77 +114,20 @@ vector<string> modelPathList;
 void CreateDir(string dir);
 void ReadFiles(string rootpath, vector<string>& pathList);
 
-//简化模型参数
-double simplifyRatio = 0.15;
-//MeshSimplify ms;
-SimplifyParameters sp;
-
-//特征提取
-//FeatureExtractor fExtractor;
-
-//面片数记录txt
-string recordForFaceLabel = "F:\\Tooth\\recordFor15SimM2FL.txt";
+int ToothNumber = 41;
+int ModelNumber = 1591804;
 
 int main(int argc, char *argv[]) {
-	sp.d_ratio = simplifyRatio;
 
-	string stl = "STL5\\";
-	string root = rootPath + oriModelPath + stl;
-	ReadFiles(root, modelPathList);
-	int breakNumver = 0;
+	stringstream ss;
+	ss << ModelNumber;
+	string ModelName = ss.str();
+	ModelName += ToothNumber > 30 ? 'L' : 'U';
+	cout << "ModelName :" << ModelName << endl;
 	
-	ofstream out_record_txt;
-	out_record_txt.open(recordForFaceLabel.c_str(),ios::ate);
-
-	for (size_t i = 0; i < modelPathList.size(); i++) {
-		if (breakNumver > 1)
-			break;
-		else breakNumver++;
-
-		string model = root + modelPathList[i];
-		cout << model << endl;
-		vector<string> nameList2,nameList3;
-		ReadFiles(model + "\\2\\", nameList2);
-		ReadFiles(model + "\\3\\", nameList3);
-
-		//ofstream out_record_txt(recordForFaceLabel.c_str());
-		out_record_txt << modelPathList[i] << "\t  ";
-
-		for (size_t j = 0; j < nameList2.size(); j++) {
-			string oriM2P = model + "\\2\\" + nameList2[j];
-			string oriM3P = model + "\\3\\" + nameList3[j];
-			string name = nameList2[j].substr(0, nameList2[j].find_last_of("."));
-			string simM2P = rootPath + simModelPath + stl + modelPathList[i] + "\\";//+ name +".obj";
-			string featureM2P = rootPath + featurePath + stl + modelPathList[i] + "\\" + name;// +".txt";
-			CreateDir(simM2P);
-			CreateDir(featureM2P);
-			//简化
-			Mesh OM2, OM3, SM2;
-			LoadMesh(OM2, oriM2P);
-			LoadMesh(OM3, oriM3P);
-			MeshSimplify ms;
-			ms.Simplify(OM2, simM2P + name + ".obj", sp);
-			LoadMesh(SM2, simM2P + name + ".obj");
-			//映射label
-			BuildLabelForBubbleNoise(OM2, OM3);
-			mapLabelForBubbleNoise(OM2, SM2);
-			int* labelForTooth = new int[SM2.fList.size()];
-			int numForLabel1 = 0;
-			for (size_t t = 0; t < SM2.fList.size(); t++) {
-				labelForTooth[t] = SM2.fList[t]->bubbleNoiseLabel;
-				if (SM2.fList[t]->bubbleNoiseLabel == 1)
-					numForLabel1++;
-			}			
-			out_record_txt << SM2.fList.size() << "\t  " << numForLabel1 << "\t  ";
-			//特征提取		
-			FeatureExtractor fExtractor;
-			fExtractor.extractFeature(simM2P + name + ".obj");
-			fExtractor.saveFeature(featureM2P, labelForTooth);
-			delete[] labelForTooth;
-		}
-		out_record_txt << endl;
-	}
-		out_record_txt.close();
+	FeatureExtractor fExtractor;
+	//fExtractor.extractFeature(simM2P + name + ".obj");
+	//fExtractor.saveFeature(featureM2P, labelForTooth);
 
 /*	glutInit(&argc, argv);
 	InitGL();
@@ -203,7 +146,7 @@ int main(int argc, char *argv[]) {
 	//remapLabelForBubbleNoise(toothSimplify, tooth);
 	BuildLabelFromLearning(toothSimplify, txt);
 	glutMainLoop();*/
-	system("pause");
+	//system("pause");
 	return 0;
 }
 
