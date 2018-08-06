@@ -104,6 +104,7 @@ string ModelRoot = "F:\\Tooth\\OriginalModel\\";
 string LabelRoot = "F:\\Tooth\\STAGE2-180721\\Label\\";
 string FeatureRoot = "F:\\Tooth\\STAGE2-180721\\Feature\\";
 bool searchFilesByWildcard(string Path, vector<string> & files);
+void BuildLabelFromTXT(Mesh& mesh, string txtPath);
 
 int main(int argc, char *argv[]) {
 
@@ -168,6 +169,26 @@ bool searchFilesByWildcard(string Path, vector<string> & files) {
 	return true;
 }
 
+//通过txt记录的面片标签设置模型Label
+void BuildLabelFromTXT(Mesh& mesh, string txtPath) {
+	ifstream txt;
+	txt.open(txtPath, ifstream::in);
+	cout << txtPath << endl;
+	int i = 0;
+	while (!txt.eof()) {
+		string s;
+		getline(txt, s);
+		istringstream is(s);
+		string faceNum, label;
+		is >> faceNum >> label;
+		mesh.fList[atoi(faceNum.c_str())]->Label = atoi(label.c_str());
+		i += 1;
+		if (i % 1000 == 0)
+			cout << ".";
+	}
+	cout << endl;
+	txt.close();
+}
 
 void CreateDir(string dir)
 {
