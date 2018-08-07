@@ -116,6 +116,8 @@ void FeatureExtractor::saveFeature(string outPath, vector<int> &faceLabel)
 	cout << "Exporting " << featuresALL->numFeatures << " features to " << outPath << std::endl;
 	if (meshMain->faces.size() != faceLabel.size()) {
 		cout << "Error: the number of face is inconsistent with the number of label!" << endl;
+		cout << "Face Number:" << meshMain->faces.size() << endl;
+		cout << "Label Number:" << faceLabel.size() << endl;
 		return;
 	}
 	for (int k = 0; k <meshMain->faces.size(); k++)

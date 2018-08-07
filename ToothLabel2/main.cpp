@@ -98,8 +98,8 @@ void MouseWheelFunc(int button, int dir, int x, int y);
 void CreateDir(string dir);
 void ReadFiles(string rootpath, vector<string>& pathList);
 
-int ToothNumber = 31;
-int ModelNumber = 1591804;
+int ToothNumber = 31;//31
+int ModelNumber = 1584424; //1591804
 string ModelRoot = "F:\\Tooth\\OriginalModel\\";
 string LabelRoot = "F:\\Tooth\\STAGE2-180721\\Label\\";
 string FeatureRoot = "F:\\Tooth\\STAGE2-180721\\Feature\\";
