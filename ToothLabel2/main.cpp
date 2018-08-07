@@ -109,6 +109,11 @@ void BuildLabelFromTXT(Mesh& mesh, string txtPath);
 
 int main(int argc, char *argv[]) {
 
+	if (argc == 3) {
+		ToothNumber = atoi(argv[1]);
+		ModelNumber = atoi(argv[2]);
+	}
+
 	stringstream ss;
 	ss << ModelNumber;
 	string ModelName = ss.str();
@@ -157,7 +162,7 @@ int main(int argc, char *argv[]) {
 	//remapLabelForBubbleNoise(toothSimplify, tooth);
 	BuildLabelFromLearning(toothSimplify, txt);
 	glutMainLoop();*/
-	system("pause");
+	//system("pause");
 	return 0;
 }
 
