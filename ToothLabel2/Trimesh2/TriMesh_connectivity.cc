@@ -148,7 +148,7 @@ void TriMesh::need_across_edge()
 
 
 // Find the max component
-void TriMesh::find_max_component(TriMesh * component)
+void TriMesh::find_max_component(TriMesh * component, vector<int> & labels)
 {
 	vector<int> groups;
 
@@ -233,7 +233,8 @@ void TriMesh::find_max_component(TriMesh * component)
 			}
 			component->faces.push_back(TriMesh::Face(thisface[0],
 				thisface[1],
-				thisface[2]));
+				thisface[2],
+				labels[i]));
 		}
 	}
 }

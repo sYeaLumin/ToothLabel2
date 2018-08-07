@@ -16,7 +16,7 @@ using std::vector;
 
 class TriMesh {
 protected:
-	static bool read_helper(const char *filename, TriMesh *mesh);
+	static bool read_helper(const char *filename, TriMesh *mesh, vector<int> & labels);
 
 public:
 	char filename[1024];
@@ -24,12 +24,16 @@ public:
 	// Types
 	struct Face {
 		int v[3];
-
+	
 		Face() {}
 		Face(const int &v0, const int &v1, const int &v2)
 			{ v[0] = v0; v[1] = v1; v[2] = v2; }
 		Face(const int *v_)
 			{ v[0] = v_[0]; v[1] = v_[1]; v[2] = v_[2]; }
+		Face(const int &v0, const int &v1, const int &v2, const int &l)
+		{
+			v[0] = v0; v[1] = v1; v[2] = v2; label = l;
+		}
 		int &operator[] (int i) { return v[i]; }
 		const int &operator[] (int i) const { return v[i]; }
 		operator const int * () const { return &(v[0]); }
@@ -44,7 +48,7 @@ public:
 		vec facenormal;
 		float faceArea;
 		point faceCenter;
-
+		int label = 0;
 	};
 
 	struct BBox {
@@ -195,10 +199,10 @@ public:
 	void need_adjacentfaces();
 	void need_across_edge();
 
-	void find_max_component(TriMesh * component);
+	void find_max_component(TriMesh * component, vector<int> & labels);
 
 	// Input and output
-	static TriMesh *read(const char *filename);
+	static TriMesh *read(const char *filename, vector<int>&labels);
 	void write(const char *filename);
 
 	// Statistics

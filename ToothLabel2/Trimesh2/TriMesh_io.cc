@@ -166,11 +166,11 @@ static void pushback(const char *buf, FILE *f)
 
 // Read a TriMesh from a file.  Defined to use a helper function to make
 // subclassing easier.
-TriMesh *TriMesh::read(const char *filename)
+TriMesh *TriMesh::read(const char *filename, vector<int>&labels)
 {
 	TriMesh *mesh = new TriMesh();
 
-	if (read_helper(filename, mesh))
+	if (read_helper(filename, mesh, labels))
 		return mesh;
 
 	delete mesh;
@@ -180,7 +180,7 @@ TriMesh *TriMesh::read(const char *filename)
 
 // Actually read a mesh.  Tries to figure out type of file from first
 // few bytes.  Filename can be "-" for stdin
-bool TriMesh::read_helper(const char *filename, TriMesh *mesh)
+bool TriMesh::read_helper(const char *filename, TriMesh *mesh, vector<int> & labels)
 {
 	strcpy_s(mesh->filename, filename);
 	if (!filename || *filename == '\0')
@@ -302,7 +302,7 @@ out:
 
 	if (ok)
 	{
-		basic->find_max_component(mesh);
+		basic->find_max_component(mesh, labels);
 		delete basic;
 	}
 	check_ind_range(mesh);

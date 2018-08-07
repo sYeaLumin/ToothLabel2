@@ -135,9 +135,9 @@ int main(int argc, char *argv[]) {
 		tooth.SaveOBJWithLabel(ToothNumber, labelForTooth, SingleToothRoot+sss.str() + "\\" + ss.str() + LorU + ".obj");
 
 		FeatureExtractor fExtractor;
-		fExtractor.extractFeature(SingleToothRoot + sss.str() + "\\" + ss.str() + LorU + ".obj");
+		fExtractor.extractFeature(SingleToothRoot + sss.str() + "\\" + ss.str() + LorU + ".obj", labelForTooth);
 		CreateDir(featureTxt);
-		fExtractor.saveFeature(featureTxt, labelForTooth);
+		fExtractor.saveFeature(featureTxt);
 	}
 
 /*	glutInit(&argc, argv);

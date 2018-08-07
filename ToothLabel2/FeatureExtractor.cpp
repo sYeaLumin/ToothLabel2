@@ -1,10 +1,10 @@
 #include <time.h>
 #include "FeatureExtractor.h"
 #include "f2c.h"
-void FeatureExtractor::extractFeature(string modelPath)
+void FeatureExtractor::extractFeature(string modelPath, vector<int> & labels)
 {
 	const char * filename = modelPath.c_str();
-	meshMain = TriMesh::read(filename);
+	meshMain = TriMesh::read(filename, labels);
 	if (meshMain == NULL) {
 		std::cerr << "Failed to open mesh file " << filename << std::endl;
 		system("pause");
@@ -111,18 +111,12 @@ void FeatureExtractor::extractFeature(string modelPath)
 	std::cout << "Mesh Feature Extraction Time: " << difftime(second, first) << " seconds\n" << std::endl;
 }
 
-void FeatureExtractor::saveFeature(string outPath, vector<int> &faceLabel)
+void FeatureExtractor::saveFeature(string outPath)
 {
 	cout << "Exporting " << featuresALL->numFeatures << " features to " << outPath << std::endl;
-	if (meshMain->faces.size() != faceLabel.size()) {
-		cout << "Error: the number of face is inconsistent with the number of label!" << endl;
-		cout << "Face Number:" << meshMain->faces.size() << endl;
-		cout << "Label Number:" << faceLabel.size() << endl;
-		return;
-	}
 	for (int k = 0; k <meshMain->faces.size(); k++)
 	{
-		string outPaths = outPath + "\\" + to_string(faceLabel[k]) + "_"  + to_string(k) + ".txt";
+		string outPaths = outPath + "\\" + to_string(meshMain->faces[k].label) + "_"  + to_string(k) + ".txt";
 		//string outPaths = outPath + "\\" + to_string(k) + "_"  + to_string(faceLabel[k]) + ".txt";
 		ofstream out_file(outPaths.c_str());
 		for (int j = 0; j < featuresALL->numFeatures; j++)
