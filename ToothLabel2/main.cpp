@@ -98,7 +98,7 @@ void MouseWheelFunc(int button, int dir, int x, int y);
 void CreateDir(string dir);
 void ReadFiles(string rootpath, vector<string>& pathList);
 
-int ToothNumber = 41;
+int ToothNumber = 31;
 int ModelNumber = 1591804;
 string ModelRoot = "F:\\Tooth\\OriginalModel\\";
 string LabelRoot = "F:\\Tooth\\STAGE2-180721\\Label\\";
@@ -130,13 +130,14 @@ int main(int argc, char *argv[]) {
 		LoadMesh(tooth, ModelRoot + ModelName + "\\2\\" +modelFiles[0]);
 		BuildLabelFromTXT(tooth, LabelRoot + ss.str() + LorU + ".txt");
 		//把要算的单个牙齿切出来
-		//CreateDir();
-		tooth.SaveOBJWithLabel(ToothNumber, SingleToothRoot+sss.str() + "\\" + ss.str() + LorU + ".obj");
+		CreateDir(SingleToothRoot + sss.str());
+		vector<int> labelForTooth;
+		tooth.SaveOBJWithLabel(ToothNumber, labelForTooth, SingleToothRoot+sss.str() + "\\" + ss.str() + LorU + ".obj");
 
 		FeatureExtractor fExtractor;
 		fExtractor.extractFeature(SingleToothRoot + sss.str() + "\\" + ss.str() + LorU + ".obj");
-
-		//fExtractor.saveFeature(featureTxt, labelForTooth);
+		CreateDir(featureTxt);
+		fExtractor.saveFeature(featureTxt, labelForTooth);
 	}
 
 /*	glutInit(&argc, argv);

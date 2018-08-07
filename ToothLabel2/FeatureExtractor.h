@@ -28,7 +28,7 @@ public:
 	FeatureExtractor() {}
 	~FeatureExtractor() {}
 	void extractFeature(string modelPath);
-	void saveFeature(string outPath, int* faceLabel);
+	void saveFeature(string outPath, vector<int> &faceLabel);
 	void reset();
 
 private:

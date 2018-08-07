@@ -111,12 +111,17 @@ void FeatureExtractor::extractFeature(string modelPath)
 	std::cout << "Mesh Feature Extraction Time: " << difftime(second, first) << " seconds\n" << std::endl;
 }
 
-void FeatureExtractor::saveFeature(string outPath, int* faceLabel)
+void FeatureExtractor::saveFeature(string outPath, vector<int> &faceLabel)
 {
 	cout << "Exporting " << featuresALL->numFeatures << " features to " << outPath << std::endl;
+	if (meshMain->faces.size() != faceLabel.size()) {
+		cout << "Error: the number of face is inconsistent with the number of label!" << endl;
+		return;
+	}
 	for (int k = 0; k <meshMain->faces.size(); k++)
 	{
-		string outPaths = outPath + "\\" + to_string(k) + "_"  + to_string(faceLabel[k]) + ".txt";
+		string outPaths = outPath + "\\" + to_string(faceLabel[k]) + "_"  + to_string(k) + ".txt";
+		//string outPaths = outPath + "\\" + to_string(k) + "_"  + to_string(faceLabel[k]) + ".txt";
 		ofstream out_file(outPaths.c_str());
 		for (int j = 0; j < featuresALL->numFeatures; j++)
 		{

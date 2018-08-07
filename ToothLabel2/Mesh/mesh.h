@@ -407,7 +407,7 @@ namespace BiMesh
 		void GetF_labels(vector<int> & labels);
 
 		//Save Single Tooth using Label (update on 20180806)
-		bool SaveOBJWithLabel(int label, string path);
+		bool SaveOBJWithLabel(int label,vector<int> & labelForTooth, string path);
 
 		//bool SaveObjFile(const char * filename);
 		void DisplayMeshInfo();

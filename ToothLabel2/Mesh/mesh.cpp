@@ -642,7 +642,7 @@ void Mesh::GetF_labels(vector<int> & labels)
 	}
 }
 
-bool Mesh::SaveOBJWithLabel(int label, string fileName)
+bool Mesh::SaveOBJWithLabel(int label, vector<int> & labelForTooth, string fileName)
 {
 	cout << "Saving " << fileName << endl;
 	vector<Vector3d> mvList;
@@ -681,6 +681,12 @@ bool Mesh::SaveOBJWithLabel(int label, string fileName)
 				v[j] = vList[fList[i]->v[j]]->TmpIndex();
 			}
 			mfList.push_back(Vector3i(v[0], v[1], v[2]));
+			int labelOfFace;
+			if (fList[i]->Label() == label)
+				labelOfFace = 0;
+			else if (fList[i]->Label() == (label + 100))
+				labelOfFace = 1;
+			labelForTooth.push_back(labelOfFace);
 		}
 	}
 
