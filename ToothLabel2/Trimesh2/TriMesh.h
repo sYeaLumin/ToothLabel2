@@ -44,6 +44,7 @@ public:
 		vec facenormal;
 		float faceArea;
 		point faceCenter;
+
 	};
 
 	struct BBox {
