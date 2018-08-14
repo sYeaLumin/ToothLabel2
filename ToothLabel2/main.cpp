@@ -169,18 +169,17 @@ string meshSepartedRoot = "F:\\Tooth\\SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "F:\\Tooth\\meshNumberList.txt";
 string meshLabelRoot = "F:\\Tooth\\180721Label\\";*/
 
-/*
 string csvPath = "D:\\Lumin\\LAB\\Tooth\\TMP\\labelEditor.csv";
 string mesh2Root = "D:\\Lumin\\LAB\\Tooth\\Data\\OriginalModel\\";
 string meshSepartedRoot = "D:\\Lumin\\LAB\\Tooth\\Data\\SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "D:\\Lumin\\LAB\\Tooth\\TMP\\meshNumberList.txt";
 string meshLabelRoot = "D:\\Lumin\\LAB\\Tooth\\180721Label\\";
-*/
+/*
 string csvPath = "labelEditor.csv";
 string mesh2Root = "OriginalModel\\";
 string meshSepartedRoot = "SeparatedModel\\reshape_ddm\\";
 string meshNumberListTXT = "meshNumberList.txt";
-string meshLabelRoot = "Label\\";
+string meshLabelRoot = "Label\\";*/
 
 string meshLabelTXT;
 vector<string> meshNumberList;
